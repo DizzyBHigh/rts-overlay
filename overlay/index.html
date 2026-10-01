@@ -3,41 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>RTS Overlay Dev</title>
+  <title>RTS Overlay</title>
   <link rel="stylesheet" href="styles/overlay.css">
 </head>
 <body>
-  <main class="overlay-shell">
-    <header>
-      <h1>RTS Overlay Dev</h1>
-      <span id="status">Disconnected</span>
-    </header>
-
-    <section class="dev-tools">
-      <h2>Development</h2>
-      <div class="actions">
-        <button id="canvas-zoom-out">-</button>
-        <button id="canvas-zoom-reset">100%</button>
-        <button id="canvas-zoom-in">+</button>
-        <label>
-          Extension manifest
-          <input id="extension-manifest" type="url"
-            value="https://dizzybhigh.github.io/rts-higher-lower/overlay/manifest.json">
-        </label>
-        <button id="extension-load">Load Extension</button>
-      </div>
-      <div id="extension-tools"></div>
-    </section>
-
-    <section>
-      <h2>Overlay Canvas</h2>
-      <div id="overlay-viewport" class="overlay-viewport">
-        <div id="rts-overlay" class="overlay-canvas"></div>
-      </div>
-    </section>
-
-    <pre id="log"></pre>
-  </main>
+  <div id="rts-overlay"></div>
 
   <script src="core/runtime.js"></script>
   <script src="core/events.js"></script>
