@@ -62,3 +62,28 @@ button {
   min-height: 80px;
   white-space: pre-wrap;
 }
+
+.panel-stage {
+  position: relative;
+  min-height: 360px;
+  margin-top: 24px;
+  border: 1px dashed #444;
+  overflow: hidden;
+}
+
+.rts-panel {
+  position: absolute;
+  width: 280px;
+  min-height: 100px;
+  padding: 20px;
+  border: 1px solid #0384CB;
+  border-radius: 12px;
+  background: rgba(24, 24, 24, .96);
+  color: #eee;
+  transform-origin: center;
+  transition: opacity .15s linear;
+}
+
+.rts-panel[hidden] {
+  display: none;
+}
