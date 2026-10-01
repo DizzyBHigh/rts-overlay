@@ -139,7 +139,7 @@
     if (output) output.textContent = 'Higher Lower game started.';
   });
 
-  document.getElementById('extension-higher-lower-draw')?.addEventListener('click', () => {
+  document.getElementById('extension-higher-lower-draw')?.addEventListener('click', async () => {
     const extension = RTS.getExtension('rts-higher-lower');
     const output = document.getElementById('extension-test-output');
     if (!extension) {
@@ -147,7 +147,8 @@
       return;
     }
     try {
-      const result = extension.api.drawCard();
+      if (output) output.textContent = 'Higher Lower: animating...';
+      const result = await extension.api.drawCard();
       if (output) output.textContent =
         'Higher Lower: ' + result.type +
         (result.result ? ' (' + result.result + ')' : '');
