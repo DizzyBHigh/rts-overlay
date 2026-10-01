@@ -1,10 +1,4 @@
 (() => {
-  const manifest = {
-    id: 'dynamic-test',
-    name: 'Dynamic Test Extension',
-    version: '0.1.0'
-  };
-
   const source = {
     init(extension) {
       extension.state.loaded = true;
@@ -14,6 +8,5 @@
     }
   };
 
-  RTS.core.extensions.registerManifest(manifest);
-  RTS.core.extensions.registerSource(manifest.id, source);
+  RTS.core.extensions.registerSource('dynamic-test', source);
 })();
