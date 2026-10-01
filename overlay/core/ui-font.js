@@ -1,7 +1,7 @@
 (() => {
   const UI = RTS.core.ui;
   const CATALOG_URL = 'https://raw.githubusercontent.com/google/fonts/main/tags/all/families.csv';
-  const cacheKey = 'rts-google-font-catalog';
+  const cacheKey = 'rts-google-font-catalog-v2';
   let catalogPromise;
 
   UI.fontPicker = options => {
