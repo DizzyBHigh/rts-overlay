@@ -35,6 +35,8 @@
     return wrap;
   };
 
+  UI.color = UI.colorPicker;
+
   function normalize(value) {
     let v = String(value || '').trim();
     if (!v.startsWith('#')) v = '#' + v;
