@@ -22,6 +22,23 @@
       return source;
     },
 
+    loadPublished(manifest, baseUrl = '', options = {}) {
+      Loader.registerManifest(manifest);
+      const base = String(baseUrl || '').replace(/\\/$/, '');
+      const css = manifest.resources?.css || [];
+      css.forEach(src => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = base + '/' + src;
+        document.head.appendChild(link);
+      });
+
+      const scripts = manifest.resources?.js || [];
+      return scripts.reduce((promise, src) => promise.then(() =>
+        Loader.loadScript(manifest.id, base + '/' + src, options)
+      ), Promise.resolve());
+    },
+
     loadScript(id, src, options = {}) {
       return new Promise((resolve, reject) => {
         const script = document.createElement('script');
