@@ -7,6 +7,7 @@
   "description": "Shared overlay platform for The Road to Somewhere extensions.",
   "tags": ["Streamer.bot", "RTS", "Overlay"],
   "publish": {
+    "overlay": true,
     "importFile": "RTS Extension - Import Code.txt",
     "assets": "assets"
   },
