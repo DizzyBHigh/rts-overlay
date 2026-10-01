@@ -36,6 +36,15 @@
       return extension;
     },
 
+    applyConfiguration(configuration = {}) {
+      const values = configuration.extensions || {};
+      Object.keys(RTS.extensions).forEach(id => {
+        const extension = RTS.extensions[id];
+        if (typeof extension.configure === 'function')
+          extension.configure(values[id] || {});
+      });
+    },
+
     getManifest(id) {
       return Loader.manifests[id] || null;
     },
