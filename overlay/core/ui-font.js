@@ -17,7 +17,10 @@
     const preview = document.createElement('div');
     preview.className = 'rts-ui-font-preview';
 
-    wrap.append(search, results, UI.field('Variant', variant), status, preview);
+    const searchRow = document.createElement('div');
+    searchRow.className = 'rts-ui-font-search-row';
+    searchRow.append(search, status);
+    wrap.append(preview, searchRow, results, UI.field('Variant', variant));
 
     let families = [];
     let selectedFamily = options.value || '';
