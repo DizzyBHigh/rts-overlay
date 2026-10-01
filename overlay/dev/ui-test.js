@@ -16,6 +16,10 @@
   add('Checkbox', RTS.core.ui.checkbox({ label: 'Enabled', checked: true }));
   add('Toggle', RTS.core.ui.toggle({ label: 'Use feature', checked: true }));
   add('Radio', RTS.core.ui.radio({ name: 'rts-ui-test', options: ['First', 'Second', 'Third'], value: 'Second' }));
+  add('Position', RTS.core.ui.positionEditor({ fields: ['x', 'y', 'scale', 'rotateZ'], value: { x: 0, y: 0, scale: 100, rotateZ: 0 } }));
+  add('Position selector', RTS.core.ui.positionSelector({ options: ['Full Screen', 'Center', 'Mini Right'], value: 'Center' }));
+  add('Font', RTS.core.ui.fontPicker({ options: ['Arial', 'Georgia', 'Courier New'], value: 'Arial' }));
+  add('Ratio', RTS.core.ui.aspectRatio({ width: 1200, height: 680 }));
   const lockRow = document.createElement('div');
   lockRow.className = 'rts-ui-lock-row';
   lockRow.append(RTS.core.ui.number({ value: 1200 }), RTS.core.ui.aspectLock({ checked: true }), RTS.core.ui.number({ value: 680 }));
