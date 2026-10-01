@@ -7,3 +7,7 @@
 .rts-ui-button.tab { background:transparent; color:var(--rts-ui-muted); border-color:transparent; border-radius:4px 4px 0 0; }
 .rts-ui-button.tab.active { color:var(--rts-ui-text); border-color:var(--rts-ui-yellow); }
 .rts-ui-position { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+
+.rts-ui-position-editor { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.rts-ui-position-editor .rts-ui-field { min-width:0; }
+.rts-ui-ratio { display:grid; gap:7px; }
