@@ -32,6 +32,21 @@
     });
   });
 
+  document.getElementById('extension-dynamic')?.addEventListener('click', async () => {
+    const output = document.getElementById('extension-test-output');
+    if (output) output.textContent = 'Loading extension script...';
+    try {
+      await RTS.core.extensions.loadScript(
+        'dynamic-test',
+        'dev/dynamic-extension.js'
+      );
+      if (output) output.textContent =
+        RTS.getExtension('dynamic-test').api.test();
+    } catch (error) {
+      if (output) output.textContent = error.message;
+    }
+  });
+
   document.getElementById('extension-api')?.addEventListener('click', () => {
     const extension = RTS.getExtension(manifest.id);
     const output = document.getElementById('extension-test-output');
