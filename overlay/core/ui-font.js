@@ -1,6 +1,6 @@
 (() => {
   const UI = RTS.core.ui;
-  const CATALOG_URL = 'https://fonts.google.com/metadata/fonts';
+  const CATALOG_URL = 'https://raw.githubusercontent.com/fontsource/google-font-metadata/main/data/api-response.json';
   const cacheKey = 'rts-google-font-catalog-v3';
   let catalogPromise;
 
