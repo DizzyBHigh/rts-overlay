@@ -51,7 +51,7 @@
           }
         };
         script.onerror = () =>
-          reject(new Error('Failed to load extension: ' + id));
+          reject(new Error('Failed to load extension resource: ' + src));
         document.head.appendChild(script);
       });
     },
