@@ -33,11 +33,24 @@ jobs:
           print(data.get('publish', {}).get('importFile', 'RTS Extension - Import Code.txt'))
           PY
           )"
+          PUBLISH_OVERLAY="$(python - <<'PY'
+          import json
+          with open('site/rts.json', encoding='utf-8') as f:
+              data = json.load(f)
+          print(str(data.get('publish', {}).get('overlay', False)).lower())
+          PY
+          )"
           IMPORT_NAME="${NAME} v${VERSION} - Import Code.txt"
           test -f "${IMPORT_SOURCE}"
           mkdir -p dist
           cp "${IMPORT_SOURCE}" "dist/${IMPORT_NAME}"
+          if [ "${PUBLISH_OVERLAY}" = "true" ]; then
+            test -d overlay
+            zip -qr dist/overlay.zip overlay
+            mv dist/overlay.zip dist/overlay
+          fi
           echo "IMPORT_PATH=dist/${IMPORT_NAME}" >> "$GITHUB_ENV"
+          echo "PUBLISH_OVERLAY=${PUBLISH_OVERLAY}" >> "$GITHUB_ENV"
 
       - name: Check placeholder was replaced
         shell: bash
@@ -50,8 +63,10 @@ jobs:
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          gh release create "${GITHUB_REF_NAME}" \
-            "$IMPORT_PATH" \
-            --title "${GITHUB_REF_NAME}" \
-            --generate-notes
+          if [ "$PUBLISH_OVERLAY" = "true" ]; then
+            gh release create "${GITHUB_REF_NAME}"               "$IMPORT_PATH"               dist/overlay               --title "${GITHUB_REF_NAME}"               --generate-notes
+          else
+            gh release create "${GITHUB_REF_NAME}"               "$IMPORT_PATH"               --title "${GITHUB_REF_NAME}"               --generate-notes
+          fi
