@@ -11,15 +11,13 @@
     const search = UI.textbox({ placeholder: 'Search Google Fonts...' });
     const results = document.createElement('div');
     results.className = 'rts-ui-font-results';
-    const family = UI.dropdown({ value: options.value || '' });
     const variant = UI.dropdown({ value: options.variant || '400' });
     const status = document.createElement('small');
     status.className = 'rts-ui-description';
     const preview = document.createElement('div');
     preview.className = 'rts-ui-font-preview';
 
-    wrap.append(search, results, UI.field('Font Family', family),
-      UI.field('Variant', variant), status, preview);
+    wrap.append(search, results, UI.field('Variant', variant), status, preview);
 
     let families = [];
     let selectedFamily = options.value || '';
@@ -50,7 +48,6 @@
     const selectFamily = name => {
       selectedFamily = name;
       selectedVariant = '400';
-      family.value = name;
       renderVariants();
       renderResults(search.value);
     };
@@ -73,7 +70,6 @@
     };
 
     const updatePreview = () => {
-      selectedFamily = family.value || selectedFamily;
       selectedVariant = variant.value || '400';
       const parsed = parseVariant(selectedVariant);
       preview.textContent = selectedFamily || 'Road to Somewhere';
@@ -89,13 +85,6 @@
 
     search.addEventListener('input', () => renderResults(search.value));
 
-    family.addEventListener('change', () => {
-      selectedFamily = family.value;
-      selectedVariant = '400';
-      renderVariants();
-      renderResults(search.value);
-    });
-
     variant.addEventListener('change', updatePreview);
 
     catalog().then(items => {
@@ -104,7 +93,6 @@
         selectedFamily = '';
       renderResults(search.value);
       if (selectedFamily) {
-        family.value = selectedFamily;
         renderVariants();
       } else if (families.length) {
         selectFamily(families[0].family);
