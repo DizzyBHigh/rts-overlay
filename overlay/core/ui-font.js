@@ -1,50 +1,76 @@
 (() => {
   const UI = RTS.core.ui;
-  const CATALOG_URL = 'https://raw.githubusercontent.com/google/fonts/main/tags/all/families.csv';
-  const cacheKey = 'rts-google-font-catalog-v2';
+  const CATALOG_URL = 'https://fonts.google.com/metadata/fonts';
+  const cacheKey = 'rts-google-font-catalog-v3';
   let catalogPromise;
 
   UI.fontPicker = options => {
     const wrap = document.createElement('div');
     wrap.className = 'rts-ui-font-picker';
     const search = UI.textbox({ placeholder: 'Search Google Fonts...' });
-    const select = UI.el('select', { className: 'rts-ui-input rts-ui-select' });
-    const status = UI.el('small', { className: 'rts-ui-description', text: 'Loading Google Fonts catalog...' });
-    const preview = document.createElement('div', {});
-
+    const family = UI.dropdown({ value: options.value || '' });
+    const variant = UI.dropdown({ value: options.variant || '400' });
+    const status = document.createElement('small');
+    status.className = 'rts-ui-description';
+    const preview = document.createElement('div');
     preview.className = 'rts-ui-font-preview';
-    preview.textContent = options.value || 'Road to Somewhere';
-    wrap.append(search, select, status, preview);
+    wrap.append(search, UI.field('Font Family', family), UI.field('Variant', variant), status, preview);
 
     let families = [];
-    let selected = options.value || '';
+    let selectedFamily = options.value || '';
+    let selectedVariant = options.variant || '400';
 
-    const render = filter => {
+    const renderFamilies = filter => {
       const needle = String(filter || '').toLowerCase();
-      select.replaceChildren();
-      families.filter(name => name.toLowerCase().includes(needle)).slice(0, 500).forEach(name => {
-        select.append(UI.el('option', { value: name, text: name }));
+      family.replaceChildren();
+      families.filter(item => item.family.toLowerCase().includes(needle)).slice(0, 500)
+        .forEach(item => family.append(UI.el('option', { value: item.family, text: item.family })));
+      family.value = selectedFamily;
+      if (!family.value && family.options.length) {
+        family.selectedIndex = 0;
+        selectedFamily = family.value;
+      }
+      renderVariants();
+    };
+
+    const renderVariants = () => {
+      const item = families.find(entry => entry.family === selectedFamily);
+      variant.replaceChildren();
+      (item?.variants || ['400']).forEach(value => {
+        variant.append(UI.el('option', { value, text: variantLabel(value) }));
       });
-      select.value = selected;
-      if (!select.value && select.options.length) select.selectedIndex = 0;
-      update(select.value);
+      variant.value = selectedVariant;
+      if (!variant.value && variant.options.length) {
+        variant.selectedIndex = 0;
+        selectedVariant = variant.value;
+      }
+      updatePreview();
     };
 
-    const update = value => {
-      selected = value || '';
-      preview.textContent = selected || 'Road to Somewhere';
-      preview.style.fontFamily = selected ? "'" + selected.replace(/'/g, '') + "', sans-serif" : '';
-      if (selected) loadFont(selected);
-      options.onChange?.(selected, wrap);
+    const updatePreview = () => {
+      selectedFamily = family.value || '';
+      selectedVariant = variant.value || '400';
+      const parsed = parseVariant(selectedVariant);
+      preview.textContent = selectedFamily || 'Road to Somewhere';
+      preview.style.fontFamily = selectedFamily ? "'" + selectedFamily.replace(/'/g, '') + "', sans-serif" : '';
+      preview.style.fontWeight = parsed.weight;
+      preview.style.fontStyle = parsed.style;
+      if (selectedFamily) loadFont(selectedFamily, selectedVariant);
+      options.onChange?.(selectedFamily, selectedVariant, wrap);
     };
 
-    search.addEventListener('input', () => render(search.value));
-    select.addEventListener('change', () => update(select.value));
+    search.addEventListener('input', () => renderFamilies(search.value));
+    family.addEventListener('change', () => {
+      selectedFamily = family.value;
+      selectedVariant = '400';
+      renderVariants();
+    });
+    variant.addEventListener('change', updatePreview);
 
     catalog().then(items => {
       families = items;
       status.textContent = families.length + ' Google Fonts available';
-      render('');
+      renderFamilies('');
     }).catch(error => {
       status.textContent = 'Google Fonts catalog unavailable';
       console.error(error);
@@ -61,15 +87,16 @@
     } catch (_) {}
     if (!catalogPromise) {
       catalogPromise = fetch(CATALOG_URL)
-        .then(response => response.ok ? response.text() : Promise.reject(new Error('Font catalog request failed')))
-        .then(text => {
-          const items = [...new Set(
-            text.split('\n').slice(1)
-              .map(line => line.trim())
-              .filter(Boolean)
-              .map(line => line.split(',')[0].replace(/^"|"$/g, ''))
-              .filter(name => name && name !== 'Family')
-          )].sort((a, b) => a.localeCompare(b));
+        .then(response => response.text())
+        .then(text => JSON.parse(text.replace(/^\)\]\}',?\s*/, '')))
+        .then(data => (data.familyMetadataList || [])
+          .filter(item => item.family && Array.isArray(item.variants))
+          .map(item => ({
+            family: item.family,
+            variants: [...new Set(item.variants)].sort(compareVariants)
+          }))
+          .sort((a, b) => a.family.localeCompare(b.family)))
+        .then(items => {
           localStorage.setItem(cacheKey, JSON.stringify(items));
           return items;
         });
@@ -77,13 +104,33 @@
     return catalogPromise;
   }
 
-  function loadFont(family) {
-    const id = 'rts-font-' + family.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  function variantLabel(value) {
+    const italic = String(value).endsWith('i');
+    const weight = parseInt(String(value).replace('i', ''), 10);
+    const names = { 100: 'Thin', 200: 'ExtraLight', 300: 'Light', 400: 'Regular', 500: 'Medium', 600: 'SemiBold', 700: 'Bold', 800: 'ExtraBold', 900: 'Black' };
+    return (names[weight] || value) + ' (' + weight + ')' + (italic ? ' Italic' : '');
+  }
+
+  function parseVariant(value) {
+    const italic = String(value).endsWith('i');
+    const weight = parseInt(String(value).replace('i', ''), 10) || 400;
+    return { weight, style: italic ? 'italic' : 'normal' };
+  }
+
+  function compareVariants(a, b) {
+    const pa = parseVariant(a), pb = parseVariant(b);
+    return pa.weight - pb.weight || pa.style.localeCompare(pb.style);
+  }
+
+  function loadFont(family, variant) {
+    const parsed = parseVariant(variant);
+    const id = 'rts-font-' + family.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + variant;
     if (document.getElementById(id)) return;
+    const style = parsed.style === 'italic' ? 'ital,wght@1,' + parsed.weight : 'wght@' + parsed.weight;
     const link = document.createElement('link');
     link.id = id;
     link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(family).replace(/%20/g, '+') + '&display=swap';
+    link.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(family).replace(/%20/g, '+') + ':style@' + encodeURIComponent(style) + '&display=swap';
     document.head.append(link);
   }
 })();
