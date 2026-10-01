@@ -3,7 +3,7 @@
   const count = document.getElementById('message-test-count');
   if (!host || !count || !RTS.core.messaging || !RTS.core.panels) return;
 
-  const panel = RTS.core.panels.create('message-test', { parent: host });
+  host.textContent = '';\n  const panel = RTS.core.panels.create('message-test', { parent: host });
   const positions = {
     Left: { x: -28, y: 0, scale: 100 },
     Center: { x: 0, y: 0, scale: 100 },
