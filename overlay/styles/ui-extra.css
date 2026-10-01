@@ -11,3 +11,7 @@
 .rts-ui-position-editor { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
 .rts-ui-position-editor .rts-ui-field { min-width:0; }
 .rts-ui-ratio { display:grid; gap:7px; }
+
+.rts-ui-color-picker { display:grid; grid-template-columns:40px 1fr; gap:7px; align-items:center; }
+.rts-ui-color-picker .rts-ui-field { grid-column:1 / -1; }
+.rts-ui-alpha-value { color:var(--rts-ui-muted); font-size:12px; text-align:right; }
