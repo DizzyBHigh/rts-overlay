@@ -111,6 +111,23 @@
       'Higher Lower card flipping while moving.';
   });
 
+  document.getElementById('extension-higher-lower-command')?.addEventListener('click', () => {
+    const output = document.getElementById('extension-test-output');
+    RTS.core.events.emit('RTS - Overlay - Extension Command', {
+      eventName: 'RTS - Overlay - Extension Command',
+      args: {
+        rtsOverlayExtension: 'rts-higher-lower',
+        rtsOverlayCommand: 'flip',
+        rtsOverlayData: JSON.stringify({
+          rank: 'Queen',
+          suit: 'Spades',
+          symbol: '♠'
+        })
+      }
+    });
+    if (output) output.textContent = 'Higher Lower command event sent.';
+  });
+
   document.getElementById('extension-api')?.addEventListener('click', () => {
     const extension = RTS.getExtension(manifest.id);
     const output = document.getElementById('extension-test-output');
