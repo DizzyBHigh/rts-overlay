@@ -35,3 +35,6 @@
 
 .rts-ui-font-search-row { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; }
 .rts-ui-font-search-row .rts-ui-description { white-space:nowrap; }
+
+.rts-ui-color-swatch { position:relative; overflow:hidden; }
+.rts-ui-color-swatch::after { content:""; position:absolute; inset:2px; border-radius:2px; background:var(--rts-ui-swatch-color); pointer-events:none; }
