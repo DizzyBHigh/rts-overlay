@@ -88,8 +88,10 @@ button {
   display: none;
 }
 
-.message-test-output {
-  min-height: 56px;
+ .message-test-output {
+  position: relative;
+  min-height: 120px;
+  overflow: hidden;
   margin: 12px 0;
   padding: 16px;
   border: 1px solid #444;
