@@ -83,10 +83,27 @@
 
   UI.slider = options => {
     const wrap = UI.el('div', { className: 'rts-ui-slider' });
-    const input = UI.el('input', { type: 'range', min: options.min ?? 0, max: options.max ?? 100, step: options.step ?? 1, value: options.value ?? 0 });
-    const value = UI.el('output', { className: 'rts-ui-slider-value', text: input.value });
-    input.addEventListener('input', () => { value.textContent = input.value; options.onInput?.(Number(input.value), input); });
-    wrap.append(input, value);
+    const range = UI.el('input', {
+      type: 'range', min: options.min ?? 0, max: options.max ?? 100,
+      step: options.step ?? 1, value: options.value ?? 0
+    });
+    const value = UI.el('output', { className: 'rts-ui-slider-value', text: range.value });
+    const numeric = options.numericInput ? UI.number({
+      value: range.value, min: options.min, max: options.max, step: options.step ?? 1
+    }) : null;
+
+    const sync = source => {
+      const next = Number(source.value);
+      range.value = next;
+      value.textContent = next;
+      if (numeric) numeric.value = next;
+      options.onInput?.(next, source);
+    };
+
+    range.addEventListener('input', () => sync(range));
+    numeric?.addEventListener('input', () => sync(numeric));
+    wrap.append(numeric || range, range, value);
+    if (!numeric) wrap.replaceChildren(range, value);
     return wrap;
   };
 
