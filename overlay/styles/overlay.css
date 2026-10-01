@@ -96,3 +96,13 @@ button {
   border-radius: 8px;
   background: #181818;
 }
+
+.message-test-output--active {
+  transform: scale(1.02);
+  opacity: 1;
+}
+
+.message-test-output--finished {
+  transform: scale(.96);
+  opacity: .35;
+}
