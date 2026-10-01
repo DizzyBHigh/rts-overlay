@@ -35,17 +35,17 @@
 
       const scripts = manifest.resources?.js || [];
       return scripts.reduce((promise, src) => promise.then(() =>
-        Loader.loadScript(manifest.id, base + '/' + src, options)
-      ), Promise.resolve());
+        Loader.loadResource(base + '/' + src)
+      ), Promise.resolve()).then(() => Loader.load(manifest.id, options));
     },
 
-    loadScript(id, src, options = {}) {
+    loadResource(src) {
       return new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = src;
         script.onload = () => {
           try {
-            resolve(Loader.load(id, options));
+            resolve();
           } catch (error) {
             reject(error);
           }
