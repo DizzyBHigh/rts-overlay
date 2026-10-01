@@ -4,10 +4,31 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>RTS Overlay</title>
-  <link rel="stylesheet" href="overlay.css">
+  <link rel="stylesheet" href="styles/overlay.css">
 </head>
 <body>
-  <div id="rts-overlay"></div>
-  <script src="overlay.js"></script>
+  <main class="overlay-shell">
+    <header>
+      <h1>RTS Overlay</h1>
+      <span id="status">Disconnected</span>
+    </header>
+
+    <section>
+      <h2>Configuration</h2>
+      <textarea id="configuration" spellcheck="false"></textarea>
+      <div class="actions">
+        <button id="load">Load from Streamer.bot</button>
+        <button id="save">Save to Streamer.bot</button>
+      </div>
+    </section>
+
+    <pre id="log"></pre>
+  </main>
+
+  <script src="core/runtime.js"></script>
+  <script src="core/extensions.js"></script>
+  <script src="core/websocket.js"></script>
+  <script src="core/configuration.js"></script>
+  <script src="core/app.js"></script>
 </body>
 </html>
