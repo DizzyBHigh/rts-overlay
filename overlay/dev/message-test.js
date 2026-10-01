@@ -3,7 +3,8 @@
   const count = document.getElementById('message-test-count');
   if (!host || !count || !RTS.core.messaging || !RTS.core.panels) return;
 
-  host.textContent = '';\n  const panel = RTS.core.panels.create('message-test', { parent: host });
+  host.textContent = '';
+  const panel = RTS.core.panels.create('message-test', { parent: host });
   const positions = {
     Left: { x: -28, y: 0, scale: 100 },
     Center: { x: 0, y: 0, scale: 100 },
@@ -15,6 +16,12 @@
   };
 
   let sequence = 0;
+  const updateCount = () => {
+    count.textContent = queue.isActive()
+      ? 'Active message - ' + queue.size() + ' waiting'
+      : queue.size() + ' waiting';
+  };
+
   const queue = RTS.core.messaging.create('dev-test', {
     present(message, finish) {
       panel.setContent('<strong>' + message.text + '</strong>');
@@ -31,12 +38,6 @@
     }
   });
 
-  const updateCount = () => {
-    count.textContent = queue.isActive()
-      ? 'Active message - ' + queue.size() + ' waiting'
-      : queue.size() + ' waiting';
-  };
-
   document.getElementById('message-enqueue')?.addEventListener('click', () => {
     sequence++;
     queue.enqueue({ text: 'Message ' + sequence });
@@ -46,7 +47,6 @@
   document.getElementById('message-clear')?.addEventListener('click', () => {
     queue.clear();
     panel.hide();
-    host.classList.remove('message-test-output--active', 'message-test-output--finished');
     updateCount();
   });
 
