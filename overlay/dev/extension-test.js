@@ -8,6 +8,12 @@
   const source = {
     init(extension) {
       extension.state.message = 'Extension loaded';
+      extension.configure = configuration => {
+        extension.state.configuration = configuration;
+        const output = document.getElementById('extension-test-output');
+        if (output) output.textContent =
+          'Configured: ' + JSON.stringify(configuration);
+      };
       extension.api.test = () => 'RTS extension API works';
       const output = document.getElementById('extension-test-output');
       if (output) output.textContent = extension.state.message;
