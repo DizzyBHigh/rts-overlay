@@ -40,7 +40,7 @@
     '<div id="extension-tools"></div>',
     '<pre id="log"></pre>',
     '</aside>'
-  ];
+  ].join('');
   document.body.appendChild(toolbar);
 
   document.getElementById('extension-load').onclick = async () => {
