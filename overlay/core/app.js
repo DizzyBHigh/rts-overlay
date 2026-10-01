@@ -9,24 +9,30 @@
       message?.data?.eventName ??
       message?.eventName;
 
-    if (eventName !== 'RTS - Overlay - Configuration') return;
+    if (eventName === 'RTS - Overlay - Configuration') {
+      const configuration =
+        message?.data?.args?.rtsOverlayConfiguration ??
+        message?.args?.rtsOverlayConfiguration;
 
-    const configuration =
+      if (!configuration) return;
+
+      try {
+        window.RTSOverlayConfiguration.apply(
+          typeof configuration === 'string'
+            ? JSON.parse(configuration)
+            : configuration
+        );
+        log('Configuration received from Streamer.bot.');
+      } catch (error) {
+        log(error.message);
+      }
+      return;
+    }
+
+    RTS.core.events?.emit(eventName, message);
       message?.data?.args?.rtsOverlayConfiguration ??
       message?.args?.rtsOverlayConfiguration;
 
-    if (!configuration) return;
-
-    try {
-      window.RTSOverlayConfiguration.apply(
-        typeof configuration === 'string'
-          ? JSON.parse(configuration)
-          : configuration
-      );
-      log('Configuration received from Streamer.bot.');
-    } catch (error) {
-      log(error.message);
-    }
   });
 
   document.getElementById('load').onclick = () => {
