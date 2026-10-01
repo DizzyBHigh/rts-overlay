@@ -1,0 +1,64 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #eee;
+}
+
+body {
+  padding: 24px;
+}
+
+.overlay-shell {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+header,
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+header {
+  justify-content: space-between;
+}
+
+textarea {
+  width: 100%;
+  min-height: 520px;
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #181818;
+  color: #eee;
+  font: 14px Consolas, monospace;
+}
+
+button {
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#status.connected {
+  color: #6fdc8c;
+}
+
+#status.error {
+  color: #ff7777;
+}
+
+#log {
+  min-height: 80px;
+  white-space: pre-wrap;
+}
