@@ -29,6 +29,11 @@
   border: 2px solid rgba(3,132,203,.75);
   background: rgba(8,12,15,.72);
   pointer-events: none;
+  z-index: 0;
+}
+
+#rts-overlay {
+  z-index: 1;
 }
 
 #rts-dev-screen span {
