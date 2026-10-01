@@ -54,7 +54,7 @@
     if (output) output.textContent = 'Loading Higher Lower extension...';
     try {
       await RTS.core.extensions.loadManifest(
-        'https://raw.githubusercontent.com/DizzyBHigh/rts-higher-lower/main/overlay/manifest.json'
+        'https://dizzybhigh.github.io/rts-higher-lower/overlay/manifest.json'
       );
       const extension = RTS.getExtension('rts-higher-lower');
       extension.api.showCard({
