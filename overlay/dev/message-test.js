@@ -1,25 +1,31 @@
 (() => {
-  const output = document.getElementById('message-test-output');
+  const host = document.getElementById('message-test-output');
   const count = document.getElementById('message-test-count');
-  if (!output || !count || !RTS.core.messaging) return;
+  if (!host || !count || !RTS.core.messaging || !RTS.core.panels) return;
+
+  const panel = RTS.core.panels.create('message-test', { parent: host });
+  const positions = {
+    Left: { x: -28, y: 0, scale: 100 },
+    Center: { x: 0, y: 0, scale: 100 },
+    Right: { x: 28, y: 0, scale: 100 }
+  };
+  const profile = {
+    start: [{ position: 'Left', duration: 0 }],
+    end: [{ position: 'Right', duration: 400, easing: 'ease-in' }]
+  };
 
   let sequence = 0;
   const queue = RTS.core.messaging.create('dev-test', {
     present(message, finish) {
-      output.textContent = message.text;
-      output.classList.add('message-test-output--active');
-      count.textContent = 'Showing ' + message.text;
-
-      setTimeout(() => {
-        output.classList.remove('message-test-output--active');
-        output.classList.add('message-test-output--finished');
-        setTimeout(() => {
-          output.classList.remove('message-test-output--finished');
-          finish();
-        }, 400);
-      }, message.duration);
+      panel.setContent('<strong>' + message.text + '</strong>');
+      RTS.core.messagePresentation.present(panel, message, {
+        positions,
+        profile,
+        initialPosition: positions.Left,
+        duration: 1000
+      }, finish);
+      updateCount();
     },
-
     finished() {
       updateCount();
     }
@@ -33,20 +39,14 @@
 
   document.getElementById('message-enqueue')?.addEventListener('click', () => {
     sequence++;
-    queue.enqueue({
-      text: 'Message ' + sequence,
-      duration: 1000
-    });
+    queue.enqueue({ text: 'Message ' + sequence });
     updateCount();
   });
 
   document.getElementById('message-clear')?.addEventListener('click', () => {
     queue.clear();
-    output.classList.remove(
-      'message-test-output--active',
-      'message-test-output--finished'
-    );
-    output.textContent = 'Queue cleared';
+    panel.hide();
+    host.classList.remove('message-test-output--active', 'message-test-output--finished');
     updateCount();
   });
 
