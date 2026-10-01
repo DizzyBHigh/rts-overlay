@@ -1,0 +1,9 @@
+.rts-ui-color { display:grid; grid-template-columns:40px 1fr; gap:7px; }
+.rts-ui-color input[type="color"] { width:40px; height:32px; padding:2px; border:1px solid var(--rts-ui-border); border-radius:4px; background:var(--rts-ui-bg); }
+.rts-ui-font-picker { display:grid; gap:7px; }
+.rts-ui-font-preview { min-height:42px; padding:8px; border:1px solid var(--rts-ui-border); border-radius:4px; color:var(--rts-ui-text); font-size:20px; }
+.rts-ui-tabs { display:grid; gap:8px; }
+.rts-ui-tab-bar { display:flex; gap:4px; border-bottom:1px solid var(--rts-ui-border); }
+.rts-ui-button.tab { background:transparent; color:var(--rts-ui-muted); border-color:transparent; border-radius:4px 4px 0 0; }
+.rts-ui-button.tab.active { color:var(--rts-ui-text); border-color:var(--rts-ui-yellow); }
+.rts-ui-position { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
