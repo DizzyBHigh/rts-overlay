@@ -63,10 +63,13 @@
       catalogPromise = fetch(CATALOG_URL)
         .then(response => response.ok ? response.text() : Promise.reject(new Error('Font catalog request failed')))
         .then(text => {
-          const items = text.split('\n').slice(1).map(line => line.trim()).filter(Boolean)
-            .map(line => line.split(',')[0].replace(/^"|"$/g, ''))
-            .filter(name => name && name !== 'Family')
-            .sort((a, b) => a.localeCompare(b));
+          const items = [...new Set(
+            text.split('\n').slice(1)
+              .map(line => line.trim())
+              .filter(Boolean)
+              .map(line => line.split(',')[0].replace(/^"|"$/g, ''))
+              .filter(name => name && name !== 'Family')
+          )].sort((a, b) => a.localeCompare(b));
           localStorage.setItem(cacheKey, JSON.stringify(items));
           return items;
         });
