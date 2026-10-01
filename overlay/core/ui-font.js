@@ -1,7 +1,7 @@
 (() => {
   const UI = RTS.core.ui;
   const CATALOG_URL = 'https://raw.githubusercontent.com/fontsource/google-font-metadata/main/data/api-response.json';
-  const cacheKey = 'rts-google-font-catalog-v3';
+  const cacheKey = 'rts-google-font-catalog-v4';
   let catalogPromise;
 
   UI.fontPicker = options => {
@@ -127,7 +127,7 @@
       catalogPromise = fetch(CATALOG_URL)
         .then(response => response.text())
         .then(text => JSON.parse(text.replace(/^\)\]\}',?\s*/, '')))
-        .then(data => (data.familyMetadataList || [])
+        .then(data => (Array.isArray(data) ? data : (data.familyMetadataList || []))
           .filter(item => item.family && Array.isArray(item.variants))
           .map(item => ({
             family: item.family,
