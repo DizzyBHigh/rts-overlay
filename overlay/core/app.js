@@ -32,19 +32,25 @@
     RTS.core.events?.emit(eventName, message);
   });
 
-  document.getElementById('load').onclick = () => {
-    window.RTSOverlayConfiguration.request();
-    log('Requested configuration from Streamer.bot.');
-  };
+  const loadButton = document.getElementById('load');
+  if (loadButton) {
+    loadButton.onclick = () => {
+      window.RTSOverlayConfiguration.request();
+      log('Requested configuration from Streamer.bot.');
+    };
+  }
 
-  document.getElementById('save').onclick = () => {
-    try {
-      if (window.RTSOverlayConfiguration.save())
-        log('Configuration sent to Streamer.bot.');
-    } catch (error) {
-      log(error.message);
-    }
-  };
+  const saveButton = document.getElementById('save');
+  if (saveButton) {
+    saveButton.onclick = () => {
+      try {
+        if (window.RTSOverlayConfiguration.save())
+          log('Configuration sent to Streamer.bot.');
+      } catch (error) {
+        log(error.message);
+      }
+    };
+  }
 
   window.RTSOverlaySocket.connect();
 })();
