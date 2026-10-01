@@ -30,9 +30,6 @@
     }
 
     RTS.core.events?.emit(eventName, message);
-      message?.data?.args?.rtsOverlayConfiguration ??
-      message?.args?.rtsOverlayConfiguration;
-
   });
 
   document.getElementById('load').onclick = () => {
