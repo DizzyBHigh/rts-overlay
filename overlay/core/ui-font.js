@@ -131,19 +131,23 @@
   }
 
   function variantLabel(value) {
-    const italic = String(value).endsWith('i');
-    const weight = parseInt(String(value).replace('i', ''), 10);
+    const parsed = parseVariant(value);
     const names = {
       100: 'Thin', 200: 'ExtraLight', 300: 'Light', 400: 'Regular',
       500: 'Medium', 600: 'SemiBold', 700: 'Bold', 800: 'ExtraBold',
       900: 'Black'
     };
-    return (names[weight] || value) + ' (' + weight + ')' + (italic ? ' Italic' : '');
+    return (names[parsed.weight] || String(value)) +
+      (parsed.style === 'italic' ? ' Italic' : '');
   }
 
   function parseVariant(value) {
-    const italic = String(value).endsWith('i');
-    const weight = parseInt(String(value).replace('i', ''), 10) || 400;
+    const raw = String(value || '').toLowerCase();
+    const italic = raw === 'italic' || raw.endsWith('italic') || raw.endsWith('i');
+    const numeric = raw.replace(/italic$/, '').replace(/i$/, '');
+    const weight = numeric === 'regular' || !numeric
+      ? 400
+      : parseInt(numeric, 10) || 400;
     return { weight, style: italic ? 'italic' : 'normal' };
   }
 
