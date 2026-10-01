@@ -24,7 +24,7 @@
 
     loadPublished(manifest, baseUrl = '', options = {}) {
       Loader.registerManifest(manifest);
-      const base = String(baseUrl || '').replace(/\\/$/, '');
+      const base = String(baseUrl || '').replace(/\/$/, '');
       const css = manifest.resources?.css || [];
       css.forEach(src => {
         const link = document.createElement('link');
