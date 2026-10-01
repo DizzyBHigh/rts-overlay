@@ -10,6 +10,11 @@
   style.href = 'dev/dev.css';
   document.head.appendChild(style);
 
+  const viewportStyle = document.createElement('link');
+  viewportStyle.rel = 'stylesheet';
+  viewportStyle.href = 'dev/dev-viewport.css';
+  document.head.appendChild(viewportStyle);
+
   const toolbar = document.createElement('aside');
   toolbar.id = 'rts-dev-toolbar';
   toolbar.innerHTML = [
