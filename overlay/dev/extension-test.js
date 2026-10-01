@@ -49,6 +49,26 @@
     }
   });
 
+  document.getElementById('extension-higher-lower')?.addEventListener('click', async () => {
+    const output = document.getElementById('extension-test-output');
+    if (output) output.textContent = 'Loading Higher Lower extension...';
+    try {
+      await RTS.core.extensions.loadManifest(
+        'https://raw.githubusercontent.com/DizzyBHigh/rts-higher-lower/main/overlay/manifest.json'
+      );
+      const extension = RTS.getExtension('rts-higher-lower');
+      extension.api.showCard({
+        rank: '7',
+        suit: 'Hearts',
+        symbol: '♥'
+      });
+      if (output) output.textContent =
+        'Higher Lower extension loaded and test card displayed.';
+    } catch (error) {
+      if (output) output.textContent = error.message;
+    }
+  });
+
   document.getElementById('extension-api')?.addEventListener('click', () => {
     const extension = RTS.getExtension(manifest.id);
     const output = document.getElementById('extension-test-output');
