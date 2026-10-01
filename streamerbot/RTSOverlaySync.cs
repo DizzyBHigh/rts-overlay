@@ -3,7 +3,8 @@ using Newtonsoft.Json.Linq;
 
 public class CPHInline
 {
-    private const string ConfigurationKey = "rts.overlay.configuration";
+    private const string ConfigurationKey = "rts-overlay";
+    private const string LegacyKey = "rts.overlay.configuration";
     private const string EventName = "RTS - Overlay - Configuration";
 
     public bool Execute()
@@ -67,11 +68,19 @@ public class CPHInline
         var raw = CPH.GetGlobalVar<string>(ConfigurationKey, true);
 
         if (string.IsNullOrWhiteSpace(raw))
+            raw = CPH.GetGlobalVar<string>(LegacyKey, true);
+
+        if (string.IsNullOrWhiteSpace(raw))
             return CreateDefaults();
 
         try
         {
-            return JObject.Parse(raw);
+            var configuration = JObject.Parse(raw);
+
+            if (configuration["overlay"] is JObject overlay)
+                return overlay;
+
+            return configuration;
         }
         catch
         {
@@ -85,9 +94,10 @@ public class CPHInline
     {
         return new JObject
         {
-            ["version"] = 1,
-            ["overlay"] = new JObject(),
-            ["extensions"] = new JObject()
+            ["messaging"] = new JObject(),
+            ["panels"] = new JObject(),
+            ["positioning"] = new JObject(),
+            ["animation"] = new JObject()
         };
     }
 }
