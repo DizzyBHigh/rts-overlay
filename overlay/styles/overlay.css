@@ -71,12 +71,22 @@ button {
   overflow: hidden;
 }
 
-.rts-panel {
+.overlay-canvas {
+  position: relative;
+  width: min(960px, 100%);
+  aspect-ratio: 16 / 9;
+  margin-top: 12px;
+  border: 1px solid #0384CB;
+  background: #080808;
+  overflow: hidden;
+}
+
+.panel-stage .rts-panel,
+.message-test-output .rts-panel {
   position: absolute;
   width: 280px;
   min-height: 100px;
   padding: 20px;
-  border: 1px solid #0384CB;
   border-radius: 12px;
   background: rgba(24, 24, 24, .96);
   color: #eee;
