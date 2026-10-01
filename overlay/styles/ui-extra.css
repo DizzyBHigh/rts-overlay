@@ -26,3 +26,9 @@
 .rts-ui-color-sv { height:170px; cursor:crosshair; }
 .rts-ui-color-hue,.rts-ui-color-alpha { width:100%; }
 .rts-ui-color-alpha { appearance:none; height:18px; border-radius:9px; }
+
+.rts-ui-font-results { display:grid; gap:3px; max-height:220px; overflow-y:auto; padding:3px; border:1px solid var(--rts-ui-border); border-radius:4px; background:var(--rts-ui-bg); }
+.rts-ui-font-results:empty { display:none; }
+.rts-ui-font-results .rts-ui-button.font-result { justify-content:flex-start; text-align:left; background:transparent; color:var(--rts-ui-text); border-color:transparent; }
+.rts-ui-font-results .rts-ui-button.font-result:hover { border-color:var(--rts-ui-blue); }
+.rts-ui-font-results .rts-ui-button.font-result.selected { border-color:var(--rts-ui-yellow); }
