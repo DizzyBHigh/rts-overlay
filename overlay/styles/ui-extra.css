@@ -32,3 +32,6 @@
 .rts-ui-font-results .rts-ui-button.font-result { justify-content:flex-start; text-align:left; background:transparent; color:var(--rts-ui-text); border-color:transparent; }
 .rts-ui-font-results .rts-ui-button.font-result:hover { border-color:var(--rts-ui-blue); }
 .rts-ui-font-results .rts-ui-button.font-result.selected { border-color:var(--rts-ui-yellow); }
+
+.rts-ui-font-search-row { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; }
+.rts-ui-font-search-row .rts-ui-description { white-space:nowrap; }
