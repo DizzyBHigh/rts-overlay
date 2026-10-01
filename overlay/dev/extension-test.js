@@ -69,6 +69,21 @@
     }
   });
 
+  document.getElementById('extension-higher-lower-flip')?.addEventListener('click', () => {
+    const extension = RTS.getExtension('rts-higher-lower');
+    const output = document.getElementById('extension-test-output');
+    if (!extension) {
+      if (output) output.textContent = 'Load Higher Lower first.';
+      return;
+    }
+    extension.api.flipCard({
+      rank: 'Queen',
+      suit: 'Spades',
+      symbol: '♠'
+    });
+    if (output) output.textContent = 'Higher Lower card flip running.';
+  });
+
   document.getElementById('extension-api')?.addEventListener('click', () => {
     const extension = RTS.getExtension(manifest.id);
     const output = document.getElementById('extension-test-output');
