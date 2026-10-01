@@ -130,7 +130,7 @@
     const link = document.createElement('link');
     link.id = id;
     link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(family).replace(/%20/g, '+') + ':style@' + encodeURIComponent(style) + '&display=swap';
+    link.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(family).replace(/%20/g, '+') + ':' + style + '&display=swap';
     document.head.append(link);
   }
 })();
