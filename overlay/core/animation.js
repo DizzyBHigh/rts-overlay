@@ -1,0 +1,108 @@
+(() => {
+  const runners = new WeakMap();
+
+  const Engine = {
+    easing(name) {
+      switch (String(name || 'ease-in-out').toLowerCase()) {
+        case 'linear': return t => t;
+        case 'ease-in': return t => t * t * t;
+        case 'ease-out': return t => 1 - Math.pow(1 - t, 3);
+        default: return t => t < .5
+          ? 4 * t * t * t
+          : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+    },
+
+    interpolate(from, to, progress) {
+      const a = RTS.core.positioning.normalise(from);
+      const b = RTS.core.positioning.normalise(to);
+      const result = {};
+      Object.keys(a).forEach(key => {
+        result[key] = a[key] + (b[key] - a[key]) * progress;
+      });
+      return result;
+    },
+
+    equal(from, to) {
+      const a = RTS.core.positioning.normalise(from);
+      const b = RTS.core.positioning.normalise(to);
+      return Object.keys(a).every(key => a[key] === b[key]);
+    },
+
+    createRunner(target, positions = {}) {
+      if (target && runners.has(target)) {
+        const existing = runners.get(target);
+        existing.configure(positions);
+        return existing;
+      }
+
+      let configured = positions;
+      let active = null;
+      let token = 0;
+      let frame = null;
+
+      const cancel = () => {
+        token++;
+        if (frame) cancelAnimationFrame(frame);
+        frame = null;
+      };
+
+      const apply = position => {
+        active = position;
+        RTS.core.positioning.apply(target, position);
+      };
+
+      const transition = (from, to, duration, easing, complete) => {
+        cancel();
+        const start = RTS.core.positioning.normalise(from);
+        const end = RTS.core.positioning.normalise(to);
+        const ms = Math.max(0, Number(duration) || 0);
+
+        if (!ms || Engine.equal(start, end)) {
+          apply(end);
+          complete?.();
+          return;
+        }
+
+        const runToken = token;
+        const ease = Engine.easing(easing);
+        const started = performance.now();
+
+        const draw = now => {
+          if (runToken !== token) return;
+          const progress = Math.min(1, Math.max(0, (now - started) / ms));
+          apply(Engine.interpolate(start, end, ease(progress)));
+          if (progress < 1) {
+            frame = requestAnimationFrame(draw);
+            return;
+          }
+          frame = null;
+          apply(end);
+          complete?.();
+        };
+
+        frame = requestAnimationFrame(draw);
+      };
+
+      const runner = {
+        configure(value) {
+          configured = value || {};
+        },
+        resolve(name, fallback = {}) {
+          return RTS.core.positioning.resolve(configured, name, fallback);
+        },
+        apply,
+        transition,
+        cancel,
+        getActive: () => active,
+        setActive: value => { active = value; }
+      };
+
+      if (target) runners.set(target, runner);
+      return runner;
+    }
+  };
+
+  RTS.core.animation = Engine;
+  window.RTSAnimationEngine = Engine;
+})();
