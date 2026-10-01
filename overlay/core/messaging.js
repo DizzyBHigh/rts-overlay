@@ -8,7 +8,29 @@
       if (queues.has(id)) return queues.get(id);
 
       let active = false;
+      let current = null;
       const items = [];
+
+      const finish = () => {
+        if (!active) return;
+        const message = current;
+        current = null;
+        active = false;
+        options.finished?.(message);
+        process();
+      };
+
+      const process = () => {
+        if (active || !items.length) return;
+        current = items.shift();
+        active = true;
+        if (typeof options.present === 'function') {
+          options.present(current, finish);
+        } else {
+          finish();
+        }
+      };
+
       const queue = {
         id,
 
@@ -19,16 +41,8 @@
         },
 
         next() {
-          if (active || !items.length) return null;
-          active = true;
-          const message = items.shift();
-          const finish = () => {
-            active = false;
-            options.finished?.(message);
-            process();
-          };
-          options.present?.(message, finish);
-          return message;
+          process();
+          return current;
         },
 
         clear() {
@@ -43,16 +57,8 @@
           return active;
         },
 
-        finish() {
-          if (!active) return;
-          active = false;
-          process();
-        }
+        finish
       };
-
-      function process() {
-        if (!active && items.length) queue.next();
-      }
 
       queues.set(id, queue);
       return queue;
@@ -66,6 +72,7 @@
       const queue = this.get(name);
       if (!queue) return;
       queue.clear();
+      queue.finish();
       queues.delete(queue.id);
     }
   };
