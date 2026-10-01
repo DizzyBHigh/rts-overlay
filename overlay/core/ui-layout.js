@@ -27,6 +27,12 @@
     return root;
   };
 
+  UI.positionSelector = options => {
+    const select = UI.dropdown({ options: options.options || [], value: options.value || options.options?.[0] || '' });
+    select.addEventListener('change', () => options.onChange?.(select.value, select));
+    return select;
+  };
+
   UI.position = options => {
     const wrap = document.createElement('div');
     wrap.className = 'rts-ui-position';
