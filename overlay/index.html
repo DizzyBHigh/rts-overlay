@@ -3,62 +3,36 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>RTS Overlay</title>
+  <title>RTS Overlay Dev</title>
   <link rel="stylesheet" href="styles/overlay.css">
 </head>
 <body>
   <main class="overlay-shell">
     <header>
-      <h1>RTS Overlay</h1>
+      <h1>RTS Overlay Dev</h1>
       <span id="status">Disconnected</span>
     </header>
 
-    <section>
-      <h2>Configuration</h2>
-      <textarea id="configuration" spellcheck="false"></textarea>
+    <section class="dev-tools">
+      <h2>Development</h2>
       <div class="actions">
-        <button id="load">Load from Streamer.bot</button>
-        <button id="save">Save to Streamer.bot</button>
+        <button id="canvas-zoom-out">-</button>
+        <button id="canvas-zoom-reset">100%</button>
+        <button id="canvas-zoom-in">+</button>
+        <label>
+          Extension manifest
+          <input id="extension-manifest" type="url"
+            value="https://dizzybhigh.github.io/rts-higher-lower/overlay/manifest.json">
+        </label>
+        <button id="extension-load">Load Extension</button>
       </div>
-    </section>
-
-    <section>
-      <h2>Panel Test</h2>
-      <div id="panel-stage" class="panel-stage"></div>
-      <div class="actions">
-        <button id="panel-show">Show Panel</button>
-        <button id="panel-hide">Hide Panel</button>
-      </div>
+      <div id="extension-tools"></div>
     </section>
 
     <section>
       <h2>Overlay Canvas</h2>
-      <div id="rts-overlay" class="overlay-canvas"></div>
-    </section>
-
-    <section>
-      <h2>Extension Runtime Test</h2>
-      <div id="extension-test-output">Waiting for extension.</div>
-      <div class="actions">
-        <button id="extension-apply">Apply Test Configuration</button>
-        <button id="extension-api">Call Extension API</button>
-        <button id="extension-dynamic">Load Dynamic Extension</button>
-        <button id="extension-higher-lower">Load Higher Lower</button>
-        <button id="extension-higher-lower-flip">Flip Higher Lower Card</button>
-        <button id="extension-higher-lower-flip-move">Flip + Move Higher Lower</button>
-        <button id="extension-higher-lower-command">Send Command Event</button>
-        <button id="extension-higher-lower-start">Start Higher Lower</button>
-        <button id="extension-higher-lower-draw">Draw Higher Lower</button>
-      </div>
-    </section>
-
-    <section>
-      <h2>Message Queue Test</h2>
-      <div id="message-test-output" class="message-test-output">Waiting</div>
-      <div id="message-test-count">0 waiting</div>
-      <div class="actions">
-        <button id="message-enqueue">Queue Message</button>
-        <button id="message-clear">Clear Queue</button>
+      <div id="overlay-viewport" class="overlay-viewport">
+        <div id="rts-overlay" class="overlay-canvas"></div>
       </div>
     </section>
 
@@ -77,8 +51,6 @@
   <script src="core/panels.js"></script>
   <script src="core/messaging.js"></script>
   <script src="core/message-presentation.js"></script>
-  <script src="dev/panel-test.js"></script>
-  <script src="dev/message-test.js"></script>
-  <script src="dev/extension-test.js"></script>
+  <script src="dev/dev-mode.js"></script>
 </body>
 </html>
