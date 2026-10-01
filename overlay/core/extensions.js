@@ -34,6 +34,7 @@
     loadPublished(manifest, baseUrl = '', options = {}) {
       Loader.registerManifest(manifest);
       const base = String(baseUrl || '').replace(/\/$/, '');
+      const loadOptions = { ...options, baseUrl: base };
       const css = manifest.resources?.css || [];
       css.forEach(src => {
         const link = document.createElement('link');
@@ -45,7 +46,9 @@
       const scripts = manifest.resources?.js || [];
       return scripts.reduce((promise, src) => promise.then(() =>
         Loader.loadResource(base + '/' + src)
-      ), Promise.resolve()).then(() => Loader.load(manifest.id, options));
+      ), Promise.resolve()).then(() =>
+        Loader.load(manifest.id, loadOptions)
+      );
     },
 
     loadResource(src) {
