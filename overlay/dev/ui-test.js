@@ -1,0 +1,24 @@
+(() => {
+  const tools = document.getElementById('extension-tools');
+  if (!tools || !RTS.core.ui) return;
+  const section = RTS.core.ui.section('RTS UI Controls');
+  const grid = document.createElement('div');
+  grid.className = 'rts-ui-test-grid';
+  const add = (label, control) => grid.append(RTS.core.ui.field(label, control));
+  add('Number', RTS.core.ui.number({ value: 42, min: 0, max: 100 }));
+  add('Text', RTS.core.ui.textbox({ value: 'Road to Somewhere' }));
+  add('Dropdown', RTS.core.ui.dropdown({ options: ['Dark', 'Light', 'System'], value: 'Dark' }));
+  add('Slider', RTS.core.ui.slider({ value: 65, min: 0, max: 100 }));
+  add('Colour', RTS.core.ui.color({ value: '#0384CB' }));
+  add('Date', RTS.core.ui.date({ value: '2026-10-01' }));
+  add('Time', RTS.core.ui.time({ value: '12:00' }));
+  add('Date/time', RTS.core.ui.datetime({ value: '2026-10-01T12:00' }));
+  add('Checkbox', RTS.core.ui.checkbox({ label: 'Enabled', checked: true }));
+  add('Toggle', RTS.core.ui.toggle({ label: 'Use feature', checked: true }));
+  add('Radio', RTS.core.ui.radio({ name: 'rts-ui-test', options: ['First', 'Second', 'Third'], value: 'Second' }));
+  const lockRow = document.createElement('div');
+  lockRow.className = 'rts-ui-lock-row';
+  lockRow.append(RTS.core.ui.number({ value: 1200 }), RTS.core.ui.aspectLock({ checked: true }), RTS.core.ui.number({ value: 680 }));
+  section.append(grid, RTS.core.ui.title('Aspect Ratio Lock'), lockRow);
+  tools.append(section);
+})();
