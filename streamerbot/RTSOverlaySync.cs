@@ -66,9 +66,13 @@ public class CPHInline
     private JObject ReadConfiguration()
     {
         var raw = CPH.GetGlobalVar<string>(ConfigurationKey, true);
+        var legacy = false;
 
         if (string.IsNullOrWhiteSpace(raw))
+        {
             raw = CPH.GetGlobalVar<string>(LegacyKey, true);
+            legacy = !string.IsNullOrWhiteSpace(raw);
+        }
 
         if (string.IsNullOrWhiteSpace(raw))
             return CreateDefaults();
@@ -78,7 +82,15 @@ public class CPHInline
             var configuration = JObject.Parse(raw);
 
             if (configuration["overlay"] is JObject overlay)
+            {
+                if (legacy)
+                    CPH.SetGlobalVar(
+                        ConfigurationKey,
+                        overlay.ToString(Newtonsoft.Json.Formatting.None),
+                        true);
+
                 return overlay;
+            }
 
             return configuration;
         }
