@@ -12,7 +12,7 @@
     const results = document.createElement('div');
     results.className = 'rts-ui-font-results';
     const variant = UI.dropdown({ value: options.variant || '400' });
-    const status = document.createElement('small');
+    const status = document.createElement('strong');
     status.className = 'rts-ui-description';
     const preview = document.createElement('div');
     preview.className = 'rts-ui-font-preview';
