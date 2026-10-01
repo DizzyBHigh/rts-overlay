@@ -54,6 +54,21 @@
   RTSOverlaySocket.saveConfiguration = configuration =>
     RTSOverlaySocket.doAction('save', configuration);
 
+  RTSOverlaySocket.requestAction = (action, args = {}) => {
+    if (!RTSOverlaySocket.socket ||
+        RTSOverlaySocket.socket.readyState !== WebSocket.OPEN)
+      return false;
+
+    RTSOverlaySocket.socket.send(JSON.stringify({
+      request: 'DoAction',
+      id: `rts-overlay-action-${Date.now()}`,
+      action: { name: action },
+      args
+    }));
+
+    return true;
+  };
+
   RTSOverlaySocket.doAction = (operation, configuration) => {
     if (!RTSOverlaySocket.socket ||
         RTSOverlaySocket.socket.readyState !== WebSocket.OPEN)
