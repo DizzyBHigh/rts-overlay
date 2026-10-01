@@ -32,7 +32,7 @@
     const render = () => {
       const rgb = hsvToRgb(hsv.h, hsv.s, hsv.v);
       color = rgbToHex(rgb) + percentToHex(alpha.value);
-      swatch.style.background = color;
+      swatch.style.setProperty('--rts-ui-swatch-color', color);
       sv.style.background = 'linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, hsl(' + hsv.h + ' 100% 50%))';
       hue.value = hsv.h;
       alpha.value = alphaFromHex(color.slice(7));
