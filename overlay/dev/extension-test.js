@@ -128,6 +128,34 @@
     if (output) output.textContent = 'Higher Lower command event sent.';
   });
 
+  document.getElementById('extension-higher-lower-start')?.addEventListener('click', () => {
+    const extension = RTS.getExtension('rts-higher-lower');
+    const output = document.getElementById('extension-test-output');
+    if (!extension) {
+      if (output) output.textContent = 'Load Higher Lower first.';
+      return;
+    }
+    extension.api.startGame(10);
+    if (output) output.textContent = 'Higher Lower game started.';
+  });
+
+  document.getElementById('extension-higher-lower-draw')?.addEventListener('click', () => {
+    const extension = RTS.getExtension('rts-higher-lower');
+    const output = document.getElementById('extension-test-output');
+    if (!extension) {
+      if (output) output.textContent = 'Load Higher Lower first.';
+      return;
+    }
+    try {
+      const result = extension.api.drawCard();
+      if (output) output.textContent =
+        'Higher Lower: ' + result.type +
+        (result.result ? ' (' + result.result + ')' : '');
+    } catch (error) {
+      if (output) output.textContent = error.message;
+    }
+  });
+
   document.getElementById('extension-api')?.addEventListener('click', () => {
     const extension = RTS.getExtension(manifest.id);
     const output = document.getElementById('extension-test-output');
