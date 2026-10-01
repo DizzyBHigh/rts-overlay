@@ -39,7 +39,8 @@
     '</section>',
     '<div id="extension-tools"></div>',
     '<pre id="log"></pre>',
-    '</aside>';
+    '</aside>'
+  ];
   document.body.appendChild(toolbar);
 
   document.getElementById('extension-load').onclick = async () => {
