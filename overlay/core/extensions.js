@@ -22,6 +22,15 @@
       return source;
     },
 
+    async loadManifest(url, options = {}) {
+      const response = await fetch(url);
+      if (!response.ok)
+        throw new Error('Failed to load extension manifest.');
+      const manifest = await response.json();
+      const base = url.substring(0, url.lastIndexOf('/'));
+      return Loader.loadPublished(manifest, base, options);
+    },
+
     loadPublished(manifest, baseUrl = '', options = {}) {
       Loader.registerManifest(manifest);
       const base = String(baseUrl || '').replace(/\/$/, '');
