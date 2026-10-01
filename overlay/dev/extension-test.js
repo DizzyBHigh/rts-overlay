@@ -36,10 +36,12 @@
     const output = document.getElementById('extension-test-output');
     if (output) output.textContent = 'Loading extension script...';
     try {
-      await RTS.core.extensions.loadScript(
-        'dynamic-test',
-        'dev/dynamic-extension.js'
-      );
+      await RTS.core.extensions.loadPublished({
+        id: 'dynamic-test',
+        name: 'Dynamic Test Extension',
+        version: '0.1.0',
+        resources: { js: ['dev/dynamic-extension.js'] }
+      }, '.');
       if (output) output.textContent =
         RTS.getExtension('dynamic-test').api.test();
     } catch (error) {
