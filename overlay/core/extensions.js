@@ -22,6 +22,23 @@
       return source;
     },
 
+    loadScript(id, src, options = {}) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = () => {
+          try {
+            resolve(Loader.load(id, options));
+          } catch (error) {
+            reject(error);
+          }
+        };
+        script.onerror = () =>
+          reject(new Error('Failed to load extension: ' + id));
+        document.head.appendChild(script);
+      });
+    },
+
     load(id, options = {}) {
       const manifest = Loader.manifests[id];
       const source = Loader.sources[id];
