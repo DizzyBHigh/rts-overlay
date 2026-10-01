@@ -16,7 +16,7 @@ body {
 }
 
 .overlay-shell {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -31,23 +31,22 @@ header {
   justify-content: space-between;
 }
 
-textarea {
-  width: 100%;
-  min-height: 520px;
-  margin: 12px 0;
-  padding: 12px;
-  border: 1px solid #444;
-  border-radius: 6px;
-  background: #181818;
-  color: #eee;
-  font: 14px Consolas, monospace;
+button,
+input {
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 5px;
 }
 
 button {
-  padding: 10px 14px;
-  border: 0;
-  border-radius: 5px;
   cursor: pointer;
+}
+
+input {
+  min-width: 420px;
+  background: #181818;
+  color: #eee;
+  border: 1px solid #444;
 }
 
 #status.connected {
@@ -58,63 +57,41 @@ button {
   color: #ff7777;
 }
 
-#log {
-  min-height: 80px;
-  white-space: pre-wrap;
+.dev-tools {
+  margin-bottom: 24px;
 }
 
-.panel-stage {
+.dev-tools h2 {
+  margin-bottom: 12px;
+}
+
+#extension-tools {
+  margin-top: 12px;
+}
+
+#extension-tools .actions {
+  flex-wrap: wrap;
+}
+
+.overlay-viewport {
   position: relative;
+  width: 100%;
+  height: min(70vh, 700px);
   min-height: 360px;
-  margin-top: 24px;
-  border: 1px dashed #444;
-  overflow: hidden;
+  overflow: auto;
+  border: 1px solid #0384CB;
+  background: #080808;
 }
 
 .overlay-canvas {
   position: relative;
-  width: min(960px, 100%);
-  aspect-ratio: 16 / 9;
-  margin-top: 12px;
-  border: 1px solid #0384CB;
-  background: #080808;
-  overflow: hidden;
+  width: 1920px;
+  height: 1080px;
+  flex: none;
+  transform-origin: top left;
 }
 
-.panel-stage .rts-panel,
-.message-test-output .rts-panel {
-  position: absolute;
-  width: 280px;
-  min-height: 100px;
-  padding: 20px;
-  border-radius: 12px;
-  background: rgba(24, 24, 24, .96);
-  color: #eee;
-  transform-origin: center;
-  transition: opacity .15s linear;
-}
-
-.rts-panel[hidden] {
-  display: none;
-}
-
- .message-test-output {
-  position: relative;
-  min-height: 120px;
-  overflow: hidden;
-  margin: 12px 0;
-  padding: 16px;
-  border: 1px solid #444;
-  border-radius: 8px;
-  background: #181818;
-}
-
-.message-test-output--active {
-  transform: scale(1.02);
-  opacity: 1;
-}
-
-.message-test-output--finished {
-  transform: scale(.96);
-  opacity: .35;
+#log {
+  min-height: 40px;
+  white-space: pre-wrap;
 }
