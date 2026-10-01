@@ -18,8 +18,7 @@
       parent.appendChild(element);
 
       const runner = RTS.core.animation.createRunner(
-        element,
-        options.positions || {}
+        element, options.positions || {}
       );
 
       const panel = {
@@ -30,17 +29,13 @@
 
         configure(value = {}) {
           this.options = { ...this.options, ...value };
-          if (value.positions)
-            this.runner.configure(value.positions);
+          if (value.positions) this.runner.configure(value.positions);
           return this;
         },
 
         setContent(content) {
-          if (content instanceof Node) {
-            this.element.replaceChildren(content);
-          } else {
-            this.element.innerHTML = String(content ?? '');
-          }
+          if (content instanceof Node) this.element.replaceChildren(content);
+          else this.element.innerHTML = String(content ?? '');
           return this;
         },
 
@@ -48,6 +43,14 @@
           this.element.hidden = false;
           this.element.setAttribute('aria-hidden', 'false');
           if (position) this.runner.apply(position);
+          return this;
+        },
+
+        animate(profile, phase = 'start', complete) {
+          const sequence = RTS.core.animationProfiles.sequence(profile, phase);
+          RTS.core.animationProfiles.run(
+            this.runner, this.options.positions || {}, sequence, complete
+          );
           return this;
         },
 
