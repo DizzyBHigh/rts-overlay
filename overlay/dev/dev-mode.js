@@ -43,6 +43,9 @@
   ].join('');
   document.body.appendChild(toolbar);
 
+  loadStyle('ui-test.css');
+  loadScript('ui-test.js');
+
   document.getElementById('extension-load').onclick = async () => {
     const input = document.getElementById('extension-manifest');
     const url = input?.value.trim();
@@ -57,6 +60,19 @@
       setLog(error?.message || String(error));
     }
   };
+
+  function loadStyle(name) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'dev/' + name;
+    document.head.appendChild(link);
+  }
+
+  function loadScript(name) {
+    const script = document.createElement('script');
+    script.src = 'dev/' + name;
+    document.body.appendChild(script);
+  }
 
   function setLog(message) {
     const log = document.getElementById('log');
