@@ -23,6 +23,7 @@
       if (editor)
         editor.value = JSON.stringify(configuration, null, 2);
 
+      RTS.core.extensions?.applyConfiguration(configuration);
       return true;
     },
 
