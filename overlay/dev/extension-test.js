@@ -23,4 +23,18 @@
   RTS.core.extensions.registerManifest(manifest);
   RTS.core.extensions.registerSource(manifest.id, source);
   RTS.core.extensions.load(manifest.id);
+
+  document.getElementById('extension-apply')?.addEventListener('click', () => {
+    RTS.core.extensions.applyConfiguration({
+      extensions: {
+        'dev-test': { example: true, value: 42 }
+      }
+    });
+  });
+
+  document.getElementById('extension-api')?.addEventListener('click', () => {
+    const extension = RTS.getExtension(manifest.id);
+    const output = document.getElementById('extension-test-output');
+    if (output) output.textContent = extension.api.test();
+  });
 })();
