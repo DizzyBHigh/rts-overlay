@@ -5,17 +5,6 @@
     apply(configuration) {
       if (!configuration || typeof configuration !== 'object') return false;
 
-      if (!configuration.extensions ||
-          typeof configuration.extensions !== 'object') {
-        configuration.extensions =
-          configuration.extension &&
-          typeof configuration.extension === 'object'
-            ? configuration.extension
-            : {};
-      }
-
-      delete configuration.extension;
-
       Configuration.current = configuration;
       window.rtsOverlayConfiguration = configuration;
 
@@ -23,7 +12,6 @@
       if (editor)
         editor.value = JSON.stringify(configuration, null, 2);
 
-      RTS.core.extensions?.applyConfiguration(configuration);
       return true;
     },
 
