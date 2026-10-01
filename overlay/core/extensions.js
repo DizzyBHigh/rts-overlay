@@ -46,22 +46,21 @@
       const scripts = manifest.resources?.js || [];
       return scripts.reduce((promise, src) => promise.then(() =>
         Loader.loadResource(base + '/' + src)
-      ), Promise.resolve()).then(() =>
-        Loader.load(manifest.id, loadOptions)
-      );
+      ), Promise.resolve()).then(() => {
+        const extension = Loader.load(manifest.id, loadOptions);
+        if (!options.dev) return extension;
+        const devScripts = manifest.resources?.dev?.js || [];
+        return devScripts.reduce((promise, src) => promise.then(() =>
+          Loader.loadResource(base + '/' + src)
+        ), Promise.resolve()).then(() => extension);
+      });
     },
 
     loadResource(src) {
       return new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = src;
-        script.onload = () => {
-          try {
-            resolve();
-          } catch (error) {
-            reject(error);
-          }
-        };
+        script.onload = () => resolve();
         script.onerror = () =>
           reject(new Error('Failed to load extension resource: ' + src));
         document.head.appendChild(script);
