@@ -66,7 +66,14 @@ jobs:
         shell: bash
         run: |
           if [ "$PUBLISH_OVERLAY" = "true" ]; then
-            gh release create "${GITHUB_REF_NAME}"               "$IMPORT_PATH"               dist/overlay               --title "${GITHUB_REF_NAME}"               --generate-notes
+            gh release create "${GITHUB_REF_NAME}" \
+              "$IMPORT_PATH" \
+              dist/overlay \
+              --title "${GITHUB_REF_NAME}" \
+              --generate-notes
           else
-            gh release create "${GITHUB_REF_NAME}"               "$IMPORT_PATH"               --title "${GITHUB_REF_NAME}"               --generate-notes
+            gh release create "${GITHUB_REF_NAME}" \
+              "$IMPORT_PATH" \
+              --title "${GITHUB_REF_NAME}" \
+              --generate-notes
           fi
