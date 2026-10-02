@@ -3,11 +3,13 @@
     mount(host, options = {}) {
       const root = document.createElement('section');
       root.className = 'rts-position-editor';
+      root.tabIndex = -1;
       root.appendChild(RTS.core.ui.title(options.title || 'Position Editor'));
       const select = document.createElement('select');
       const overlay = document.getElementById('rts-overlay');
       const targets = options.targets || [];
       const markers = new Map();
+      const selected = new Set();
       let visible = true;
       let drag = null;
       let resize = null;
@@ -17,6 +19,7 @@
         option.textContent = target.label || target.id;
         select.appendChild(option);
       });
+      if (select.value) selected.add(select.value);
       const target = id => targets.find(item => item.id === id);
       const value = id => target(id)?.get?.() || {};
       const position = RTS.core.ui.positionEditor({
@@ -47,9 +50,7 @@
         }
       });
       const save = options.onSave
-        ? RTS.core.ui.button('Save Layout', {
-            onClick: () => options.onSave?.()
-          })
+        ? RTS.core.ui.button('Save Layout', { onClick: () => options.onSave?.() })
         : null;
       root.append(select, positionRow, scaleRow, toggle);
       if (save) root.appendChild(save);
@@ -72,6 +73,18 @@
         markers.set(target.id, marker);
         if (overlay) overlay.appendChild(marker);
       });
+      function setSelection(id, additive) {
+        if (additive) {
+          if (selected.has(id) && selected.size > 1) selected.delete(id);
+          else selected.add(id);
+        } else if (!selected.has(id)) {
+          selected.clear();
+          selected.add(id);
+        }
+        if (!selected.size) selected.add(id);
+        select.value = id;
+        render();
+      }
       function apply(id, patch, transient = false) {
         const item = target(id);
         if (!item?.set) return;
@@ -80,7 +93,7 @@
         render(id, patch);
       }
       function render(overrideId, override = {}) {
-        const selected = select.value;
+        const primary = select.value;
         targets.forEach(item => {
           const marker = markers.get(item.id);
           const current = item.id === overrideId
@@ -90,13 +103,14 @@
           marker.hidden = !visible;
           marker.style.zIndex = visible ? '2147483647' : '';
           marker.dataset.target = item.label || item.id;
-          marker.classList.toggle('is-selected', item.id === selected);
+          marker.classList.toggle('is-selected', selected.has(item.id));
+          marker.classList.toggle('is-primary', item.id === primary);
           marker.style.left = (current.x || 0) + 'px';
           marker.style.top = (current.y || 0) + 'px';
           marker.style.width = Math.max(1, current.width || 1) + 'px';
           marker.style.height = Math.max(1, current.height || 1) + 'px';
         });
-        const current = value(selected);
+        const current = value(primary);
         position.setValue({ x: current.x || 0, y: current.y || 0 });
         ratio.setValue({ width: current.width || 1, height: current.height || 1 });
       }
@@ -105,26 +119,36 @@
       }
       function startDrag(event, id, marker) {
         if (event.button !== 0 || event.target !== marker) return;
-        event.preventDefault(); event.stopPropagation(); select.value = id; render();
-        const current = value(id);
-        drag = { id, x: current.x || 0, y: current.y || 0, px: event.clientX, py: event.clientY, scale: pointerScale(), pointerId: event.pointerId };
-        marker.setPointerCapture(event.pointerId); options.onSelect?.(id, current);
+        event.preventDefault(); event.stopPropagation();
+        setSelection(id, event.ctrlKey || event.metaKey);
+        root.focus({ preventScroll: true });
+        const items = [...selected].map(itemId => {
+          const current = value(itemId);
+          return { id: itemId, x: current.x || 0, y: current.y || 0 };
+        });
+        drag = { items, px: event.clientX, py: event.clientY, scale: pointerScale(), pointerId: event.pointerId, marker };
+        marker.setPointerCapture(event.pointerId);
+        options.onSelect?.(id, value(id));
       }
       function moveDrag(event) {
         if (!drag) return;
         event.preventDefault(); event.stopPropagation();
-        apply(drag.id, { x: drag.x + (event.clientX - drag.px) / drag.scale, y: drag.y + (event.clientY - drag.py) / drag.scale }, true);
+        const dx = (event.clientX - drag.px) / drag.scale;
+        const dy = (event.clientY - drag.py) / drag.scale;
+        drag.items.forEach(item => apply(item.id, { x: item.x + dx, y: item.y + dy }, true));
       }
       function stopDrag(event) {
         if (!drag || event.pointerId !== drag.pointerId) return;
         event.preventDefault(); event.stopPropagation();
-        const id = drag.id; const marker = markers.get(id); drag = null;
-        options.onCommit?.(value(id), id);
+        const items = drag.items; const marker = drag.marker; drag = null;
+        items.forEach(item => options.onCommit?.(value(item.id), item.id));
         if (marker?.hasPointerCapture(event.pointerId)) marker.releasePointerCapture(event.pointerId);
       }
       function startResize(event, id, corner, handle) {
         if (event.button !== 0) return;
-        event.preventDefault(); event.stopPropagation(); select.value = id; render();
+        event.preventDefault(); event.stopPropagation();
+        setSelection(id, false);
+        root.focus({ preventScroll: true });
         const current = value(id);
         resize = { id, corner, x: current.x || 0, y: current.y || 0, width: Math.max(1, current.width || 1), height: Math.max(1, current.height || 1), px: event.clientX, py: event.clientY, scale: pointerScale(), pointerId: event.pointerId, ratio: Math.max(0.0001, (current.width || 1) / (current.height || 1)) };
         handle.setPointerCapture(event.pointerId); options.onSelect?.(id, current);
@@ -156,6 +180,14 @@
         resize = null; options.onCommit?.(value(id), id);
         if (handle?.hasPointerCapture(event.pointerId)) handle.releasePointerCapture(event.pointerId);
       }
+      function moveSelected(dx, dy) {
+        if (!selected.size) return;
+        [...selected].forEach(id => {
+          const current = value(id);
+          apply(id, { x: (current.x || 0) + dx, y: (current.y || 0) + dy }, true);
+        });
+        [...selected].forEach(id => options.onCommit?.(value(id), id));
+      }
       markers.forEach(marker => {
         marker.addEventListener('pointermove', moveDrag);
         marker.querySelectorAll('.rts-position-resize').forEach(handle => {
@@ -165,7 +197,21 @@
           handle.addEventListener('contextmenu', event => event.preventDefault());
         });
       });
+      root.addEventListener('keydown', event => {
+        if (['INPUT', 'SELECT', 'BUTTON'].includes(document.activeElement?.tagName)) return;
+        const steps = event.shiftKey ? 10 : 1;
+        const moves = {
+          ArrowLeft: [-steps, 0], ArrowRight: [steps, 0],
+          ArrowUp: [0, -steps], ArrowDown: [0, steps]
+        };
+        const move = moves[event.key];
+        if (!move) return;
+        event.preventDefault(); event.stopPropagation();
+        moveSelected(move[0], move[1]);
+      });
       select.addEventListener('change', () => {
+        selected.clear();
+        selected.add(select.value);
         render(); options.onSelect?.(select.value, value(select.value));
       });
       root.refresh = render;
