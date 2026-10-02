@@ -1,16 +1,44 @@
 #rts-dev-toolbar {
+  --rts-dev-toolbar-width: 300px;
   position: fixed;
   inset: 0 auto 0 0;
-  width: 300px;
+  width: var(--rts-dev-toolbar-width);
+  box-sizing: border-box;
   z-index: 10000;
   overflow-y: auto;
-  padding: 12px;
+  padding: 12px 18px 12px 12px;
   background: rgba(10,13,16,.97);
   border-right: 1px solid rgba(255,255,255,.14);
   box-shadow: 4px 0 22px rgba(0,0,0,.4);
   color: #fff;
   font: 600 12px/1.25 system-ui,sans-serif;
 }
+
+.dev-toolbar-resize {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 100%;
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.dev-toolbar-resize::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 2px;
+  width: 2px;
+  height: 42px;
+  transform: translateY(-50%);
+  border-radius: 2px;
+  background: rgba(224,166,52,.7);
+}
+
+.dev-toolbar-resize:hover::after,
+.rts-resizing-dev-toolbar .dev-toolbar-resize::after { background: #E0A634; }
+.rts-resizing-dev-toolbar { cursor: ew-resize; user-select: none; }
 
 .dev-toolbar-header {
   display: flex;
@@ -20,88 +48,19 @@
   border-bottom: 1px solid rgba(255,255,255,.12);
 }
 
-.dev-toolbar-header strong {
-  color: #0384CB;
-  font-size: 16px;
-  letter-spacing: .08em;
-}
-
-.dev-toolbar-header span {
-  opacity: .5;
-  font-size: 9px;
-  letter-spacing: .1em;
-}
-
-.dev-section {
-  margin-top: 10px;
-  padding: 9px;
-  border: 1px solid rgba(3,132,203,.35);
-  border-radius: 4px;
-  background: rgba(255,255,255,.025);
-}
-
-.dev-section h3 {
-  margin: 0 0 8px;
-  color: #f0c400;
-  font-size: 12px;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
-.dev-section label {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin: 7px 0;
-}
-
-.dev-section input,
-.dev-section button {
-  width: 100%;
-  padding: 7px 8px;
-  border-radius: 3px;
-}
-
-.dev-section input {
-  border: 1px solid rgba(255,255,255,.16);
-  background: #101416;
-  color: #fff;
-}
-
-.dev-section button {
-  border: 1px solid rgba(3,132,203,.42);
-  background: rgba(3,132,203,.12);
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.dev-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 5px;
-}
-
-#viewport-status {
-  display: block;
-  margin-top: 7px;
-  text-align: center;
-  color: #0384CB;
-}
-
-#extension-tools {
-  margin-top: 10px;
-}
-
-#log {
-  margin: 10px 0 0;
-  max-height: 100px;
-  overflow: auto;
-  white-space: pre-wrap;
-  color: #ffb3b3;
-  font: 11px/1.4 ui-monospace,monospace;
-}
+.dev-toolbar-header strong { color: #0384CB; font-size: 16px; letter-spacing: .08em; }
+.dev-toolbar-header span { opacity: .5; font-size: 9px; letter-spacing: .1em; }
+.dev-section { margin-top: 10px; padding: 9px; border: 1px solid rgba(3,132,203,.35); border-radius: 4px; background: rgba(255,255,255,.025); }
+.dev-section h3 { margin: 0 0 8px; color: #f0c400; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.dev-section label { display: flex; flex-direction: column; gap: 4px; margin: 7px 0; }
+.dev-section input, .dev-section button { width: 100%; padding: 7px 8px; border-radius: 3px; }
+.dev-section input { border: 1px solid rgba(255,255,255,.16); background: #101416; color: #fff; }
+.dev-section button { border: 1px solid rgba(3,132,203,.42); background: rgba(3,132,203,.12); color: #fff; font-weight: 700; cursor: pointer; }
+.dev-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+#viewport-status { display: block; margin-top: 7px; text-align: center; color: #0384CB; }
+#extension-tools { margin-top: 10px; }
+#log { margin: 10px 0 0; max-height: 100px; overflow: auto; white-space: pre-wrap; color: #ffb3b3; font: 11px/1.4 ui-monospace,monospace; }
 
 @media (max-width: 700px) {
-  #rts-dev-toolbar { width: 240px; }
+  #rts-dev-toolbar { width: var(--rts-dev-toolbar-width); min-width: 240px; }
 }
