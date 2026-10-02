@@ -87,7 +87,6 @@
     };
 
     search.addEventListener('input', () => renderResults(search.value));
-
     variant.addEventListener('change', updatePreview);
 
     catalog().then(items => {
@@ -103,6 +102,22 @@
     }).catch(error => {
       status.textContent = 'Google Fonts catalog unavailable';
       console.error(error);
+    });
+
+    wrap.getValue = () => selectedFamily;
+    wrap.getVariant = () => selectedVariant;
+    wrap.setValue = (family, nextVariant = '400') => {
+      selectedFamily = family || '';
+      selectedVariant = nextVariant || '400';
+      if (families.length && selectedFamily) renderVariants();
+    };
+    Object.defineProperty(wrap, 'value', {
+      get: () => selectedFamily,
+      set: value => wrap.setValue(value, selectedVariant)
+    });
+    Object.defineProperty(wrap, 'variant', {
+      get: () => selectedVariant,
+      set: value => wrap.setValue(selectedFamily, value)
     });
 
     return wrap;
