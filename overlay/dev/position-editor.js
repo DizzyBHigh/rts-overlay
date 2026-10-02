@@ -58,8 +58,7 @@
         position.setValue({ x: item.x || 0, y: item.y || 0 });
         ratio.setValue({
           width: item.width || 1,
-          height: item.height || 1,
-          locked: true
+          height: item.height || 1
         });
         marker.dataset.target = target()?.label || select.value;
         marker.style.left = (item.x || 0) + 'px';
