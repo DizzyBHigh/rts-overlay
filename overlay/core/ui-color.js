@@ -43,7 +43,7 @@
     let hsv = rgbToHsv(hexToRgb(color));
     let alphaValue = alphaFromHex(color.slice(7));
 
-    const render = () => {
+    const render = notify => {
       const rgb = hsvToRgb(hsv.h, hsv.s, hsv.v);
       color = rgbToHex(rgb) + percentToHex(alphaValue);
       swatch.style.setProperty('--rts-ui-swatch-color', color);
@@ -56,19 +56,21 @@
       alpha.style.setProperty('--rts-ui-alpha-color', rgbToHex(rgb));
       alphaText.textContent = 'Alpha ' + alphaValue + '%';
       text.value = color;
-      options.onChange?.(color, wrap);
-      options.onInput?.(color, wrap);
+      if (notify) {
+        options.onChange?.(color, wrap);
+        options.onInput?.(color, wrap);
+      }
     };
 
     const setFromText = value => {
       color = normalize(value);
       hsv = rgbToHsv(hexToRgb(color));
       alphaValue = alphaFromHex(color.slice(7));
-      render();
+      render(true);
     };
 
     const drag = (element, callback) => {
-      const move = event => { callback(event); render(); };
+      const move = event => { callback(event); render(true); };
       const stop = () => {
         document.removeEventListener('pointermove', move);
         document.removeEventListener('pointerup', stop);
@@ -90,9 +92,9 @@
       const update = moveEvent => {
         const rect = hue.getBoundingClientRect();
         hsv.h = clamp((moveEvent.clientX - rect.left) / rect.width) * 360;
-        render();
       };
       update(event);
+      render(true);
       drag(hue, update);
     });
     hue.addEventListener('keydown', event => {
@@ -100,7 +102,7 @@
       else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') hsv.h = (hsv.h + 359) % 360;
       else return;
       event.preventDefault();
-      render();
+      render(true);
     });
 
     sv.addEventListener('pointerdown', event => {
@@ -108,9 +110,9 @@
         const rect = sv.getBoundingClientRect();
         hsv.s = clamp((moveEvent.clientX - rect.left) / rect.width);
         hsv.v = clamp(1 - (moveEvent.clientY - rect.top) / rect.height);
-        render();
       };
       update(event);
+      render(true);
       drag(sv, update);
     });
 
@@ -118,9 +120,9 @@
       const update = moveEvent => {
         const rect = alpha.getBoundingClientRect();
         alphaValue = Math.round(clamp((moveEvent.clientX - rect.left) / rect.width) * 100);
-        render();
       };
       update(event);
+      render(true);
       drag(alpha, update);
     });
     alpha.addEventListener('keydown', event => {
@@ -128,7 +130,7 @@
       else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') alphaValue = Math.max(0, alphaValue - 1);
       else return;
       event.preventDefault();
-      render();
+      render(true);
     });
 
     text.addEventListener('change', () => setFromText(text.value));
@@ -140,7 +142,7 @@
       set: value => setFromText(value)
     });
 
-    render();
+    render(false);
     return wrap;
   };
 
