@@ -6,10 +6,12 @@
       root.innerHTML = '<h3>' + (options.title || 'Position Editor') + '</h3>';
 
       const select = document.createElement('select');
+      const toggle = document.createElement('button');
       const fields = {};
       const marker = document.createElement('div');
       const overlay = document.getElementById('rts-overlay');
       const targets = options.targets || [];
+      let visible = true;
 
       targets.forEach(target => {
         const option = document.createElement('option');
@@ -18,7 +20,15 @@
         select.appendChild(option);
       });
 
-      root.appendChild(select);
+      toggle.type = 'button';
+      toggle.textContent = 'Hide Positions';
+      toggle.onclick = () => {
+        visible = !visible;
+        marker.hidden = !visible;
+        toggle.textContent = visible ? 'Hide Positions' : 'Show Positions';
+      };
+
+      root.append(select, toggle);
       ['x', 'y', 'width', 'height'].forEach(key => {
         const input = document.createElement('input');
         input.type = 'number';
