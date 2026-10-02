@@ -6,11 +6,11 @@
     const fields = {};
     const allowed = options.fields || ['x', 'y', 'z', 'scale', 'rotateX', 'rotateY', 'rotateZ'];
     const limits = {
-      x: [-300, 300], y: [-300, 300], z: [-3000, 3000],
+      x: [-99999, 99999], y: [-99999, 99999], z: [-3000, 3000],
       scale: [0, 300], rotateX: [-720, 720], rotateY: [-720, 720], rotateZ: [-720, 720]
     };
     allowed.forEach(key => {
-      const range = limits[key] || [-9999, 9999];
+      const range = limits[key] || [-99999, 99999];
       fields[key] = UI.number({ value: options.value?.[key] ?? 0, min: range[0], max: range[1] });
       root.append(UI.field(key, fields[key]));
       fields[key].addEventListener('input', emit);
