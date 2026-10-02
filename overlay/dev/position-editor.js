@@ -21,14 +21,28 @@
       const position = RTS.core.ui.positionEditor({
         fields: ['x', 'y'],
         value: {},
+        inline: true,
         onChange: value => apply({ x: value.x, y: value.y })
       });
       const ratio = RTS.core.ui.aspectRatio({
         width: 1,
         height: 1,
         locked: true,
+        labels: ['x', 'y'],
         onChange: (width, height) => apply({ width, height })
       });
+      const positionRow = document.createElement('div');
+      positionRow.className = 'rts-position-control-row';
+      positionRow.append(
+        RTS.core.ui.el('span', { className: 'rts-position-control-title', text: 'Position' }),
+        position
+      );
+      const scaleRow = document.createElement('div');
+      scaleRow.className = 'rts-position-control-row';
+      scaleRow.append(
+        RTS.core.ui.el('span', { className: 'rts-position-control-title', text: 'Scale' }),
+        ratio
+      );
       const toggle = RTS.core.ui.button('Hide Positions', {
         onClick: () => {
           visible = !visible;
@@ -37,7 +51,7 @@
         }
       });
 
-      root.append(select, position, ratio, toggle);
+      root.append(select, positionRow, scaleRow, toggle);
       marker.className = 'rts-position-marker';
       if (overlay) overlay.appendChild(marker);
       host.appendChild(root);
