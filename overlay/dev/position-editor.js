@@ -22,6 +22,7 @@
       ['x', 'y', 'width', 'height'].forEach(key => {
         const input = document.createElement('input');
         input.type = 'number';
+        input.placeholder = key;
         input.dataset.field = key;
         fields[key] = input;
         root.appendChild(input);
@@ -56,6 +57,7 @@
       let drag = null;
       marker.addEventListener('pointerdown', event => {
         if (event.button !== 0) return;
+        event.stopPropagation();
         const item = value();
         const scale = overlay?.getBoundingClientRect().width / 1920 || 1;
         drag = { x: item.x || 0, y: item.y || 0, px: event.clientX, py: event.clientY, scale };
@@ -64,6 +66,7 @@
 
       marker.addEventListener('pointermove', event => {
         if (!drag) return;
+        event.stopPropagation();
         const item = target();
         if (!item?.set) return;
         item.set({
@@ -76,6 +79,7 @@
 
       const stop = event => {
         if (!drag) return;
+        event.stopPropagation();
         drag = null;
         if (marker.hasPointerCapture(event.pointerId)) marker.releasePointerCapture(event.pointerId);
       };
