@@ -62,11 +62,11 @@
       }
     };
 
-    const setFromText = value => {
+    const setFromText = (value, notify = true) => {
       color = normalize(value);
       hsv = rgbToHsv(hexToRgb(color));
       alphaValue = alphaFromHex(color.slice(7));
-      render(true);
+      render(notify);
     };
 
     const drag = (element, callback) => {
@@ -136,10 +136,10 @@
     text.addEventListener('change', () => setFromText(text.value));
 
     wrap.getValue = () => color;
-    wrap.setValue = value => setFromText(value);
+    wrap.setValue = value => setFromText(value, false);
     Object.defineProperty(wrap, 'value', {
       get: () => color,
-      set: value => setFromText(value)
+      set: value => setFromText(value, false)
     });
 
     render(false);
