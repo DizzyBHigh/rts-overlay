@@ -113,16 +113,35 @@
   UI.datetime = options => UI.textbox({ type: 'datetime-local', value: options.value, onInput: options.onInput });
 
   UI.aspectLock = options => {
-    const label = UI.el('label', { className: 'rts-ui-lock', title: 'Lock aspect ratio' });
-    const input = UI.el('input', { type: 'checkbox', checked: !!options.checked });
-    const icon = UI.el('span', { className: 'rts-ui-lock-icon', text: input.checked ? 'LOCKED' : 'UNLOCKED' });
-    label.append(input, icon);
-    input.addEventListener('change', () => {
-      icon.textContent = input.checked ? 'LOCKED' : 'UNLOCKED';
-      label.title = input.checked ? 'Unlock aspect ratio' : 'Lock aspect ratio';
-      options.onChange?.(input.checked, input);
+    const button = UI.el('button', {
+      className: 'rts-ui-lock',
+      type: 'button',
+      title: options.checked ? 'Unlock aspect ratio' : 'Lock aspect ratio'
     });
-    return label;
+    const icon = UI.el('span', { className: 'rts-ui-lock-icon', text: 'LOCK' });
+    let checked = !!options.checked;
+
+    const render = () => {
+      button.setAttribute('aria-pressed', checked ? 'true' : 'false');
+      button.setAttribute('aria-label', checked ? 'Unlock aspect ratio' : 'Lock aspect ratio');
+      button.title = checked ? 'Unlock aspect ratio' : 'Lock aspect ratio';
+      icon.textContent = checked ? 'LOCKED' : 'UNLOCKED';
+    };
+
+    button.append(icon);
+    button.addEventListener('click', () => {
+      checked = !checked;
+      render();
+      button.dispatchEvent(new Event('change', { bubbles: true }));
+      options.onChange?.(checked, button);
+    });
+    button.getValue = () => checked;
+    button.setValue = value => {
+      checked = !!value;
+      render();
+    };
+    render();
+    return button;
   };
 
   window.RTS = window.RTS || { core: {} };
