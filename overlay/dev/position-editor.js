@@ -94,17 +94,6 @@
         options.onChange?.(item.get?.(), id);
         render(id, patch);
       }
-      function markerValue(item, current) {
-        if (typeof item.marker === 'function')
-          return item.marker(current, overlay) || current;
-        const scale = pointerScale(item);
-        return {
-          x: (current.x || 0) * scale,
-          y: (current.y || 0) * scale,
-          width: Math.max(1, current.width || 1) * scale,
-          height: Math.max(1, current.height || 1) * scale
-        };
-      }
       function render(overrideId, override = {}) {
         const primary = select.value;
         targets.forEach(item => {
@@ -113,24 +102,21 @@
             ? { ...value(item.id), ...override }
             : value(item.id);
           if (!marker) return;
-          const display = markerValue(item, current);
           marker.hidden = !visible;
           marker.style.zIndex = visible ? '2147483647' : '';
           marker.dataset.target = item.label || item.id;
           marker.classList.toggle('is-selected', selected.has(item.id));
           marker.classList.toggle('is-primary', item.id === primary);
-          marker.style.left = (display.x || 0) + 'px';
-          marker.style.top = (display.y || 0) + 'px';
-          marker.style.width = Math.max(1, display.width || 1) + 'px';
-          marker.style.height = Math.max(1, display.height || 1) + 'px';
+          marker.style.left = (current.x || 0) + 'px';
+          marker.style.top = (current.y || 0) + 'px';
+          marker.style.width = Math.max(1, current.width || 1) + 'px';
+          marker.style.height = Math.max(1, current.height || 1) + 'px';
         });
         const current = value(primary);
         position.setValue({ x: current.x || 0, y: current.y || 0 });
         ratio.setValue({ width: current.width || 1, height: current.height || 1 });
       }
-      function pointerScale(item) {
-        if (typeof item?.pointerScale === 'function')
-          return item.pointerScale(overlay) || 1;
+      function pointerScale() {
         return overlay?.getBoundingClientRect().width / 1920 || 1;
       }
       function startDrag(event, id, marker) {
@@ -140,25 +126,18 @@
         root.focus({ preventScroll: true });
         const items = [...selected].map(itemId => {
           const current = value(itemId);
-          return {
-            id: itemId,
-            x: current.x || 0,
-            y: current.y || 0,
-            scale: pointerScale(target(itemId))
-          };
+          return { id: itemId, x: current.x || 0, y: current.y || 0 };
         });
-        drag = { items, px: event.clientX, py: event.clientY, pointerId: event.pointerId, marker };
+        drag = { items, px: event.clientX, py: event.clientY, scale: pointerScale(), pointerId: event.pointerId, marker };
         marker.setPointerCapture(event.pointerId);
         options.onSelect?.(id, value(id));
       }
       function moveDrag(event) {
         if (!drag) return;
         event.preventDefault(); event.stopPropagation();
-        drag.items.forEach(item => {
-          const dx = (event.clientX - drag.px) / item.scale;
-          const dy = (event.clientY - drag.py) / item.scale;
-          apply(item.id, { x: item.x + dx, y: item.y + dy }, true);
-        });
+        const dx = (event.clientX - drag.px) / drag.scale;
+        const dy = (event.clientY - drag.py) / drag.scale;
+        drag.items.forEach(item => apply(item.id, { x: item.x + dx, y: item.y + dy }, true));
       }
       function stopDrag(event) {
         if (!drag || event.pointerId !== drag.pointerId) return;
@@ -173,14 +152,7 @@
         setSelection(id, false);
         root.focus({ preventScroll: true });
         const current = value(id);
-        resize = {
-          id, corner, x: current.x || 0, y: current.y || 0,
-          width: Math.max(1, current.width || 1),
-          height: Math.max(1, current.height || 1),
-          px: event.clientX, py: event.clientY,
-          scale: pointerScale(target(id)), pointerId: event.pointerId,
-          ratio: Math.max(0.0001, (current.width || 1) / (current.height || 1))
-        };
+        resize = { id, corner, x: current.x || 0, y: current.y || 0, width: Math.max(1, current.width || 1), height: Math.max(1, current.height || 1), px: event.clientX, py: event.clientY, scale: pointerScale(), pointerId: event.pointerId, ratio: Math.max(0.0001, (current.width || 1) / (current.height || 1)) };
         handle.setPointerCapture(event.pointerId); options.onSelect?.(id, current);
       }
       function moveResize(event) {
