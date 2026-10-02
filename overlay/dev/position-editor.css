@@ -32,7 +32,7 @@
   box-sizing: border-box;
   z-index: 9999;
   border: 2px dashed #0384CB;
-  background: rgba(3,132,203,.16);
+  background: transparent;
   box-shadow: 0 0 0 1px rgba(255,255,255,.9), 0 0 12px rgba(3,132,203,.8);
   cursor: move;
   touch-action: none;
