@@ -7,11 +7,19 @@
     socket: null,
     reconnectTimer: null,
     reconnectDelay: 3000,
-    listeners: []
+    listeners: [],
+    connectListeners: []
   };
 
   RTSOverlaySocket.onEvent = callback => {
     RTSOverlaySocket.listeners.push(callback);
+  };
+
+  RTSOverlaySocket.onConnect = callback => {
+    if (typeof callback !== 'function') return;
+    RTSOverlaySocket.connectListeners.push(callback);
+    if (RTSOverlaySocket.socket?.readyState === WebSocket.OPEN)
+      callback();
   };
 
   RTSOverlaySocket.connect = () => {
@@ -27,6 +35,7 @@
         id: 'rts-overlay',
         events: { Custom: ['Event'] }
       }));
+      RTSOverlaySocket.connectListeners.forEach(listener => listener());
     };
 
     RTSOverlaySocket.socket.onmessage = event => {
@@ -85,7 +94,6 @@
       action: { name: 'RTS - Overlay - Sync' },
       args
     }));
-
     return true;
   };
 
