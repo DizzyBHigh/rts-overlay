@@ -28,7 +28,11 @@
     );
 
     const sync = source => {
-      if (updating || !lock.getValue()) return;
+      if (updating) return;
+      if (!lock.getValue()) {
+        options.onChange?.(Number(width.value), Number(height.value), false, root);
+        return;
+      }
       updating = true;
       if (source === width)
         height.value = Math.max(1, Math.round(Number(width.value) / ratio));
@@ -60,10 +64,12 @@
       locked: lock.getValue()
     });
     root.setValue = value => {
+      if (lock.getValue() && value?.width !== undefined && value?.height !== undefined)
+        ratio = Number(value.width) / Number(value.height) || 1;
       if (value?.width !== undefined) width.value = value.width;
       if (value?.height !== undefined) height.value = value.height;
       if (value?.locked !== undefined) lock.setValue(value.locked);
-      if (!editing && lock.getValue())
+      if (lock.getValue() && value?.width === undefined && value?.height === undefined)
         ratio = Number(width.value) / Number(height.value) || 1;
     };
     return root;
