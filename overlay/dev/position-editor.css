@@ -55,3 +55,39 @@
   font: 700 11px/1 system-ui,sans-serif;
   white-space: nowrap;
 }
+
+.rts-position-resize {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-radius: 2px;
+  background: #0384CB;
+  box-sizing: border-box;
+  z-index: 1;
+  touch-action: none;
+}
+
+.rts-position-resize--nw {
+  left: -5px;
+  top: -5px;
+  cursor: nwse-resize;
+}
+
+.rts-position-resize--ne {
+  right: -5px;
+  top: -5px;
+  cursor: nesw-resize;
+}
+
+.rts-position-resize--sw {
+  left: -5px;
+  bottom: -5px;
+  cursor: nesw-resize;
+}
+
+.rts-position-resize--se {
+  right: -5px;
+  bottom: -5px;
+  cursor: nwse-resize;
+}
