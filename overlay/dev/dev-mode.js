@@ -26,6 +26,7 @@
     '<div class="dev-toolbar-header">',
     '<strong>RTS DEV</strong><span>DEV MODE</span>',
     '</div>',
+    '<div class="dev-toolbar-resize" role="separator" aria-orientation="vertical" aria-label="Resize settings panel" tabindex="0"></div>',
     '<section class="dev-section">',
     '<h3>Overlay</h3>',
     '<label>Extension manifest',
@@ -47,6 +48,34 @@
     '</aside>'
   ].join('');
   document.body.appendChild(toolbar);
+
+  const widthKey = 'rts-dev-toolbar-width';
+  const minWidth = 280;
+  const maxWidth = 600;
+  const setToolbarWidth = width => {
+    const value = Math.max(minWidth, Math.min(maxWidth, width));
+    document.documentElement.style.setProperty('--rts-dev-toolbar-width', value + 'px');
+    localStorage.setItem(widthKey, String(value));
+  };
+  setToolbarWidth(Number(localStorage.getItem(widthKey)) || 300);
+
+  const resize = toolbar.querySelector('.dev-toolbar-resize');
+  resize.addEventListener('pointerdown', event => {
+    resize.setPointerCapture(event.pointerId);
+    const startX = event.clientX;
+    const startWidth = toolbar.getBoundingClientRect().width;
+    document.body.classList.add('rts-resizing-dev-toolbar');
+    const move = moveEvent => setToolbarWidth(startWidth + moveEvent.clientX - startX);
+    const end = () => {
+      document.body.classList.remove('rts-resizing-dev-toolbar');
+      resize.removeEventListener('pointermove', move);
+      resize.removeEventListener('pointerup', end);
+      resize.removeEventListener('pointercancel', end);
+    };
+    resize.addEventListener('pointermove', move);
+    resize.addEventListener('pointerup', end);
+    resize.addEventListener('pointercancel', end);
+  });
 
   loadScript('position-editor.js');
 
