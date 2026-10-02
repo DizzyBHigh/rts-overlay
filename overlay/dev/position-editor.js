@@ -11,6 +11,7 @@
       let visible = true;
       let drag = null;
       let resize = null;
+      if (overlay) overlay.classList.add('rts-position-editing');
       targets.forEach(target => {
         const option = document.createElement('option');
         option.value = target.id;
