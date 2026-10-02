@@ -45,10 +45,10 @@
       const target = () => targets.find(item => item.id === select.value);
       const value = () => target()?.get?.() || {};
 
-      function apply(patch) {
+      function apply(patch, transient = false) {
         const item = target();
         if (!item?.set) return;
-        item.set(patch);
+        item.set(patch, { transient });
         options.onChange?.(item.get?.());
         render();
       }
@@ -70,6 +70,7 @@
       let drag = null;
       marker.addEventListener('pointerdown', event => {
         if (event.button !== 0) return;
+        event.preventDefault();
         event.stopPropagation();
         const item = value();
         const scale = overlay?.getBoundingClientRect().width / 1920 || 1;
@@ -79,21 +80,25 @@
 
       marker.addEventListener('pointermove', event => {
         if (!drag) return;
+        event.preventDefault();
         event.stopPropagation();
         apply({
           x: drag.x + (event.clientX - drag.px) / drag.scale,
           y: drag.y + (event.clientY - drag.py) / drag.scale
-        });
+        }, true);
       });
 
       const stop = event => {
         if (!drag) return;
+        event.preventDefault();
         event.stopPropagation();
         drag = null;
+        options.onCommit?.(value());
         if (marker.hasPointerCapture(event.pointerId)) marker.releasePointerCapture(event.pointerId);
       };
       marker.addEventListener('pointerup', stop);
       marker.addEventListener('pointercancel', stop);
+      marker.addEventListener('contextmenu', event => event.preventDefault());
       select.addEventListener('change', render);
       root.refresh = render;
       render();
