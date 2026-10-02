@@ -27,8 +27,9 @@
 .rts-ui-color-sv::after { content:''; position:absolute; inset:0; background:linear-gradient(to top,#000,transparent); }
 .rts-ui-color-handle { position:absolute; left:0; top:0; width:12px; height:12px; transform:translate(-50%,-50%); box-sizing:border-box; border:2px solid #fff; border-radius:50%; box-shadow:0 0 0 1px #111; pointer-events:none; z-index:2; }
 .rts-ui-color-alpha-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:7px; align-items:center; width:100%; min-width:0; }
-.rts-ui-color-alpha { position:relative; width:100%; height:10px; border-radius:5px; cursor:pointer; touch-action:none; background-color:#fff; background-image:linear-gradient(45deg,#aaa 25%,transparent 25%),linear-gradient(-45deg,#aaa 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#aaa 75%),linear-gradient(-45deg,transparent 75%,#aaa 75%),linear-gradient(to right,transparent,var(--rts-ui-alpha-color,#0384CB)); background-size:8px 8px,8px 8px,8px 8px,8px 8px,100% 100%; background-position:0 0,0 4px,4px -4px,-4px 0,0 0; }
-.rts-ui-color-alpha:focus-visible { outline:1px solid var(--rts-ui-yellow); outline-offset:2px; }
+.rts-ui-color-alpha { position:relative; width:100%; height:10px; border-radius:5px; cursor:pointer; touch-action:none; background:linear-gradient(to right,transparent,var(--rts-ui-alpha-color,#0384CB)); }
+.rts-ui-color-alpha::before { content:''; position:absolute; inset:0; border-radius:5px; background-image:linear-gradient(45deg,#aaa 25%,transparent 25%),linear-gradient(-45deg,#aaa 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#aaa 75%),linear-gradient(-45deg,transparent 75%,#aaa 75%); background-size:8px 8px; background-position:0 0,0 4px,4px -4px,-4px 0; opacity:.45; pointer-events:none; z-index:-1; }
+.rts-ui-color-alpha:focus-visible { outline:1px solid var(--rts-ui-yellow); outline-offset:1px; }
 .rts-ui-color-alpha-handle { position:absolute; top:50%; left:0; width:6px; height:14px; transform:translate(-50%,-50%); box-sizing:border-box; border:2px solid #fff; border-radius:3px; box-shadow:0 0 0 1px #111; pointer-events:none; }
 
 .rts-ui-font-results { display:grid; gap:3px; max-height:220px; overflow-y:auto; padding:3px; border:1px solid var(--rts-ui-border); border-radius:4px; background:var(--rts-ui-bg); }
