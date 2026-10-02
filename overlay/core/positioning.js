@@ -47,8 +47,7 @@
 
     transform(element, position) {
       const p = this.normalise(position);
-      const canvas = element?.offsetParent ||
-        document.getElementById('rts-overlay') || document.body;
+      const canvas = document.getElementById('rts-overlay') || document.body;
       const point = this.point(p, canvas);
       return `translate3d(${point.x}px, ${point.y}px, ${p.z}px) ` +
         `rotateZ(${-p.rotateZ}deg) rotateY(${p.rotateY}deg) ` +
