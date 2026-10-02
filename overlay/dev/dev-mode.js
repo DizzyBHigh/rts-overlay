@@ -15,6 +15,11 @@
   viewportStyle.href = 'dev/dev-viewport.css';
   document.head.appendChild(viewportStyle);
 
+  const editorStyle = document.createElement('link');
+  editorStyle.rel = 'stylesheet';
+  editorStyle.href = 'dev/position-editor.css';
+  document.head.appendChild(editorStyle);
+
   const toolbar = document.createElement('aside');
   toolbar.id = 'rts-dev-toolbar';
   toolbar.innerHTML = [
@@ -42,6 +47,8 @@
     '</aside>'
   ].join('');
   document.body.appendChild(toolbar);
+
+  loadScript('position-editor.js');
 
   if (params.get('ui-test') === 'true') {
     loadStyle('ui-test.css');
