@@ -1,8 +1,7 @@
 #rts-dev-toolbar {
-  --rts-dev-toolbar-width: 300px;
   position: fixed;
   inset: 0 auto 0 0;
-  width: var(--rts-dev-toolbar-width);
+  width: var(--rts-dev-toolbar-width, 300px);
   box-sizing: border-box;
   z-index: 10000;
   overflow-y: auto;
@@ -62,5 +61,5 @@
 #log { margin: 10px 0 0; max-height: 100px; overflow: auto; white-space: pre-wrap; color: #ffb3b3; font: 11px/1.4 ui-monospace,monospace; }
 
 @media (max-width: 700px) {
-  #rts-dev-toolbar { width: var(--rts-dev-toolbar-width); min-width: 240px; }
+  #rts-dev-toolbar { width: var(--rts-dev-toolbar-width, 300px); min-width: 240px; }
 }
