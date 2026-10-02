@@ -1,0 +1,53 @@
+.rts-ui-collapse-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--rts-ui-yellow);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  line-height: 1.4;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.rts-ui-collapse-title::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin-right: 2px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(225deg) translateY(-1px);
+  transition: transform .12s ease;
+}
+
+.rts-ui-section.is-collapsed .rts-ui-collapse-title {
+  margin-bottom: 0;
+}
+
+.rts-ui-section.is-collapsed .rts-ui-collapse-title::after {
+  transform: rotate(45deg) translateY(-1px);
+}
+
+.rts-ui-collapse-title:hover,
+.rts-ui-collapse-title:focus-visible {
+  color: #fff;
+}
+
+.rts-ui-collapse-title:focus-visible {
+  outline: 1px solid var(--rts-ui-yellow);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.rts-ui-section.is-collapsed > :not(.rts-ui-collapse-title) {
+  display: none;
+}
