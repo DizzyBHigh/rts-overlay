@@ -115,8 +115,13 @@
   UI.aspectLock = options => {
     const label = UI.el('label', { className: 'rts-ui-lock', title: 'Lock aspect ratio' });
     const input = UI.el('input', { type: 'checkbox', checked: !!options.checked });
-    label.append(input, UI.el('span', { className: 'rts-ui-lock-icon', text: 'LOCK' }));
-    input.addEventListener('change', () => options.onChange?.(input.checked, input));
+    const icon = UI.el('span', { className: 'rts-ui-lock-icon', text: input.checked ? 'LOCKED' : 'UNLOCKED' });
+    label.append(input, icon);
+    input.addEventListener('change', () => {
+      icon.textContent = input.checked ? 'LOCKED' : 'UNLOCKED';
+      label.title = input.checked ? 'Unlock aspect ratio' : 'Lock aspect ratio';
+      options.onChange?.(input.checked, input);
+    });
     return label;
   };
 
