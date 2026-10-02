@@ -57,6 +57,7 @@
       alphaText.textContent = 'Alpha ' + alphaValue + '%';
       text.value = color;
       options.onChange?.(color, wrap);
+      options.onInput?.(color, wrap);
     };
 
     const setFromText = value => {
