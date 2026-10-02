@@ -1,12 +1,11 @@
 .rts-position-editor {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 6px;
   margin-top: 10px;
 }
 
 .rts-position-editor h3 {
-  grid-column: 1 / -1;
   margin: 0;
   color: #f0c400;
   font-size: 12px;
@@ -25,7 +24,7 @@
 }
 
 .rts-position-editor select {
-  grid-column: 1 / -1;
+  grid-column: 1;
 }
 
 .rts-position-marker {
