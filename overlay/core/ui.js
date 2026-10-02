@@ -109,16 +109,62 @@
   };
 
   UI.angle = options => {
-    const control = UI.slider({
-      min: 0,
-      max: 360,
-      step: 1,
-      value: options.value ?? 0,
-      numericInput: true,
-      onInput: options.onInput
+    const dial = UI.el('div', {
+      className: 'rts-ui-direction',
+      role: 'slider',
+      tabIndex: 0,
+      ariaLabel: options.label || 'Direction',
+      ariaValueMin: '0',
+      ariaValueMax: '360'
     });
-    control.classList.add('rts-ui-angle');
-    return control;
+    const face = UI.el('span', { className: 'rts-ui-direction-face' });
+    const line = UI.el('span', { className: 'rts-ui-direction-line' });
+    const value = UI.el('output', { className: 'rts-ui-direction-value' });
+    let angle = Number(options.value) || 0;
+
+    const normalise = value => ((Number(value) % 360) + 360) % 360;
+    const render = () => {
+      angle = normalise(angle);
+      line.style.transform = 'translate(-50%, -100%) rotate(' + angle + 'deg)';
+      value.textContent = Math.round(angle) + 'deg';
+      dial.setAttribute('aria-valuenow', String(Math.round(angle)));
+    };
+    const setAngle = next => {
+      angle = normalise(next);
+      render();
+      options.onInput?.(angle, dial);
+    };
+    const updateFromPointer = event => {
+      const rect = dial.getBoundingClientRect();
+      const x = event.clientX - rect.left - rect.width / 2;
+      const y = event.clientY - rect.top - rect.height / 2;
+      setAngle(Math.atan2(y, x) * 180 / Math.PI);
+    };
+
+    dial.addEventListener('pointerdown', event => {
+      dial.setPointerCapture?.(event.pointerId);
+      updateFromPointer(event);
+      const move = moveEvent => updateFromPointer(moveEvent);
+      const stop = () => {
+        dial.removeEventListener('pointermove', move);
+        dial.removeEventListener('pointerup', stop);
+        dial.removeEventListener('pointercancel', stop);
+      };
+      dial.addEventListener('pointermove', move);
+      dial.addEventListener('pointerup', stop);
+      dial.addEventListener('pointercancel', stop);
+    });
+    dial.addEventListener('keydown', event => {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') { event.preventDefault(); setAngle(angle - 1); }
+      if (event.key === 'ArrowRight' || event.key === 'ArrowUp') { event.preventDefault(); setAngle(angle + 1); }
+    });
+
+    face.append(line);
+    dial.append(face, value);
+    dial.getValue = () => angle;
+    dial.setValue = next => { angle = Number(next) || 0; render(); };
+    render();
+    return dial;
   };
 
   UI.fontSelector = options => {
