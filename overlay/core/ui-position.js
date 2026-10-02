@@ -14,7 +14,9 @@
     allowed.forEach(key => {
       const range = limits[key] || [-99999, 99999];
       fields[key] = UI.number({ value: options.value?.[key] ?? 0, min: range[0], max: range[1] });
-      row.append(UI.field(key, fields[key]));
+      const field = UI.el('div', { className: 'rts-ui-inline-field' });
+      field.append(fields[key], UI.el('span', { className: 'rts-ui-label', text: key }));
+      row.append(field);
       fields[key].addEventListener('input', emit);
     });
     root.append(row);
