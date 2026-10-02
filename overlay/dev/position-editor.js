@@ -3,11 +3,9 @@
     mount(host, options = {}) {
       const root = document.createElement('section');
       root.className = 'rts-position-editor';
-      root.innerHTML = '<h3>' + (options.title || 'Position Editor') + '</h3>';
+      root.appendChild(RTS.core.ui.title(options.title || 'Position Editor'));
 
       const select = document.createElement('select');
-      const toggle = document.createElement('button');
-      const fields = {};
       const marker = document.createElement('div');
       const overlay = document.getElementById('rts-overlay');
       const targets = options.targets || [];
@@ -20,25 +18,26 @@
         select.appendChild(option);
       });
 
-      toggle.type = 'button';
-      toggle.textContent = 'Hide Positions';
-      toggle.onclick = () => {
-        visible = !visible;
-        marker.hidden = !visible;
-        toggle.textContent = visible ? 'Hide Positions' : 'Show Positions';
-      };
-
-      root.append(select, toggle);
-      ['x', 'y', 'width', 'height'].forEach(key => {
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.placeholder = key;
-        input.dataset.field = key;
-        fields[key] = input;
-        root.appendChild(input);
-        input.addEventListener('input', () => applyField(key));
+      const position = RTS.core.ui.positionEditor({
+        fields: ['x', 'y'],
+        value: {},
+        onChange: value => apply({ x: value.x, y: value.y })
+      });
+      const ratio = RTS.core.ui.aspectRatio({
+        width: 1,
+        height: 1,
+        locked: true,
+        onChange: (width, height) => apply({ width, height })
+      });
+      const toggle = RTS.core.ui.button('Hide Positions', {
+        onClick: () => {
+          visible = !visible;
+          marker.hidden = !visible;
+          toggle.textContent = visible ? 'Hide Positions' : 'Show Positions';
+        }
       });
 
+      root.append(select, position, ratio, toggle);
       marker.className = 'rts-position-marker';
       if (overlay) overlay.appendChild(marker);
       host.appendChild(root);
@@ -46,23 +45,28 @@
       const target = () => targets.find(item => item.id === select.value);
       const value = () => target()?.get?.() || {};
 
-      const render = () => {
+      function apply(patch) {
+        const item = target();
+        if (!item?.set) return;
+        item.set(patch);
+        options.onChange?.(item.get?.());
+        render();
+      }
+
+      function render() {
         const item = value();
-        Object.keys(fields).forEach(key => fields[key].value = item[key] ?? 0);
+        position.setValue({ x: item.x || 0, y: item.y || 0 });
+        const width = item.width || 1;
+        const height = item.height || 1;
+        const inputs = ratio.querySelectorAll('input[type="number"]');
+        if (inputs[0]) inputs[0].value = width;
+        if (inputs[1]) inputs[1].value = height;
         marker.dataset.target = target()?.label || select.value;
         marker.style.left = (item.x || 0) + 'px';
         marker.style.top = (item.y || 0) + 'px';
-        marker.style.width = Math.max(1, item.width || 1) + 'px';
-        marker.style.height = Math.max(1, item.height || 1) + 'px';
-      };
-
-      const applyField = key => {
-        const item = target();
-        if (!item?.set) return;
-        item.set({ [key]: Number(fields[key].value) });
-        options.onChange?.(item.get?.());
-        render();
-      };
+        marker.style.width = Math.max(1, width) + 'px';
+        marker.style.height = Math.max(1, height) + 'px';
+      }
 
       let drag = null;
       marker.addEventListener('pointerdown', event => {
@@ -77,14 +81,10 @@
       marker.addEventListener('pointermove', event => {
         if (!drag) return;
         event.stopPropagation();
-        const item = target();
-        if (!item?.set) return;
-        item.set({
+        apply({
           x: drag.x + (event.clientX - drag.px) / drag.scale,
           y: drag.y + (event.clientY - drag.py) / drag.scale
         });
-        options.onChange?.(item.get?.());
-        render();
       });
 
       const stop = event => {
