@@ -82,16 +82,11 @@
   };
 
   UI.slider = options => {
-    const wrap = UI.el('div', { className: 'rts-ui-slider' });
-    const range = UI.el('input', {
-      type: 'range', min: options.min ?? 0, max: options.max ?? 100,
-      step: options.step ?? 1, value: options.value ?? 0
-    });
+    const wrap = document.createElement('div');
+    wrap.className = 'rts-ui-slider';
+    const range = UI.el('input', { type: 'range', min: options.min ?? 0, max: options.max ?? 100, step: options.step ?? 1, value: options.value ?? 0 });
     const value = UI.el('output', { className: 'rts-ui-slider-value', text: range.value });
-    const numeric = options.numericInput ? UI.number({
-      value: range.value, min: options.min, max: options.max, step: options.step ?? 1
-    }) : null;
-
+    const numeric = options.numericInput ? UI.number({ value: range.value, min: options.min, max: options.max, step: options.step ?? 1 }) : null;
     const sync = source => {
       const next = Number(source.value);
       range.value = next;
@@ -99,7 +94,6 @@
       if (numeric) numeric.value = next;
       options.onInput?.(next, source);
     };
-
     range.addEventListener('input', () => sync(range));
     numeric?.addEventListener('input', () => sync(numeric));
     wrap.append(numeric || range, range, value);
@@ -132,7 +126,6 @@
     button.addEventListener('click', () => {
       checked = !checked;
       render();
-      button.dispatchEvent(new Event('change', { bubbles: true }));
       options.onChange?.(checked, button);
     });
     button.getValue = () => checked;
