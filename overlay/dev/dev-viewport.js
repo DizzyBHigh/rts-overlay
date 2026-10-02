@@ -30,26 +30,17 @@
 
   const render = () => {
     const effective = Math.max(scale, minScale());
-    const width = 1920 * effective;
-    const height = 1080 * effective;
-
-    x = width <= viewport.clientWidth
-      ? (viewport.clientWidth - width) / 2
-      : Math.min(0, Math.max(viewport.clientWidth - width, x));
-    y = height <= viewport.clientHeight
-      ? (viewport.clientHeight - height) / 2
-      : Math.min(0, Math.max(viewport.clientHeight - height, y));
-
     stage.style.transform =
       'translate3d(' + x + 'px,' + y + 'px,0) scale(' + effective + ')';
-    document.getElementById('viewport-status').textContent =
-      Math.round(effective / fitScale() * 100) + '%';
+    const status = document.getElementById('viewport-status');
+    if (status)
+      status.textContent = Math.round(effective / fitScale() * 100) + '%';
   };
 
   const reset = () => {
     scale = fitScale();
-    x = 0;
-    y = 0;
+    x = (viewport.clientWidth - 1920 * scale) / 2;
+    y = (viewport.clientHeight - 1080 * scale) / 2;
     render();
   };
 
