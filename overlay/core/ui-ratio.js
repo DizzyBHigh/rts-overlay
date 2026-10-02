@@ -16,15 +16,13 @@
     });
     const row = document.createElement('div');
     row.className = 'rts-ui-lock-row';
-    const labels = options.labels || [];
-    const wrap = (label, input) => {
-      if (!label) return input;
-      const field = document.createElement('div');
-      field.className = 'rts-ui-ratio-field';
-      field.append(UI.el('span', { className: 'rts-ui-label', text: label }), input);
-      return field;
-    };
-    row.append(wrap(labels[0], width), lock, wrap(labels[1], height));
+    row.append(
+      UI.el('span', { className: 'rts-ui-label', text: options.labels?.[0] || 'x' }),
+      width,
+      lock,
+      height,
+      UI.el('span', { className: 'rts-ui-label', text: options.labels?.[1] || 'y' })
+    );
 
     const sync = source => {
       if (updating || !lock.getValue()) return;
