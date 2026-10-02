@@ -31,11 +31,16 @@
   position: absolute;
   box-sizing: border-box;
   z-index: 9999;
-  border: 3px dashed #0384CB;
+  border: 2px dashed #0384CB;
   background: rgba(3,132,203,.16);
-  box-shadow: 0 0 0 2px rgba(255,255,255,.9), 0 0 18px rgba(3,132,203,.8);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.9), 0 0 12px rgba(3,132,203,.8);
   cursor: move;
   touch-action: none;
+}
+
+.rts-position-marker.is-selected {
+  z-index: 10000;
+  border-width: 3px;
 }
 
 .rts-position-marker::before {
