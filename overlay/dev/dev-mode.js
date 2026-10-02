@@ -43,8 +43,10 @@
   ].join('');
   document.body.appendChild(toolbar);
 
-  loadStyle('ui-test.css');
-  loadScript('ui-test.js');
+  if (params.get('ui-test') === 'true') {
+    loadStyle('ui-test.css');
+    loadScript('ui-test.js');
+  }
 
   document.getElementById('extension-load').onclick = async () => {
     const input = document.getElementById('extension-manifest');
