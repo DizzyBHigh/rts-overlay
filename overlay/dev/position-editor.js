@@ -52,8 +52,10 @@
       const save = options.onSave
         ? RTS.core.ui.button('Save Layout', { onClick: () => options.onSave?.() })
         : null;
+      const saveStatus = document.createElement('span');
+      saveStatus.className = 'rts-position-save-status';
       root.append(select, positionRow, scaleRow, toggle);
-      if (save) root.appendChild(save);
+      if (save) root.append(save, saveStatus);
       host.appendChild(root);
       targets.forEach(target => {
         const marker = document.createElement('div');
@@ -215,6 +217,9 @@
         render(); options.onSelect?.(select.value, value(select.value));
       });
       root.refresh = render;
+      root.setSaveStatus = text => {
+        saveStatus.textContent = text || '';
+      };
       render();
       return root;
     }
