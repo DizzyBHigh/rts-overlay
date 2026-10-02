@@ -1,10 +1,26 @@
 (() => {
   const runners = new WeakMap();
 
+  const cubicBezier = (x1, y1, x2, y2) => t => {
+    let low = 0;
+    let high = 1;
+    for (let i = 0; i < 16; i++) {
+      const u = (low + high) / 2;
+      const x = 3 * (1 - u) * (1 - u) * u * x1 +
+        3 * (1 - u) * u * u * x2 + u * u * u;
+      if (x < t) low = u;
+      else high = u;
+    }
+    const u = (low + high) / 2;
+    return 3 * (1 - u) * (1 - u) * u * y1 +
+      3 * (1 - u) * u * u * y2 + u * u * u;
+  };
+
   const Engine = {
     easing(name) {
       switch (String(name || 'ease-in-out').toLowerCase()) {
         case 'linear': return t => t;
+        case 'ease': return cubicBezier(.25, .1, .25, 1);
         case 'ease-in': return t => t * t * t;
         case 'ease-out': return t => 1 - Math.pow(1 - t, 3);
         default: return t => t < .5
