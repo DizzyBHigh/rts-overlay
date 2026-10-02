@@ -1,19 +1,43 @@
 (() => {
+  const storageKey = title => 'rts-ui-collapse:' + title.trim().toLowerCase().replace(/\s+/g, '-');
+
+  const readState = key => {
+    try {
+      return window.localStorage.getItem(key) === 'open';
+    } catch {
+      return false;
+    }
+  };
+
+  const writeState = (key, open) => {
+    try {
+      window.localStorage.setItem(key, open ? 'open' : 'closed');
+    } catch {
+      // Local storage may be unavailable; collapsing still works for this session.
+    }
+  };
+
   const enhance = section => {
     if (!section || section.dataset.rtsCollapseReady === 'true') return;
     const title = section.querySelector(':scope > .rts-ui-title');
     if (!title) return;
 
+    const text = title.textContent.trim();
+    const key = storageKey(text);
+    const open = readState(key);
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'rts-ui-collapse-title';
-    button.textContent = title.textContent;
-    button.setAttribute('aria-expanded', 'true');
+    button.textContent = text;
+    button.setAttribute('aria-expanded', String(open));
     title.replaceWith(button);
+    section.classList.toggle('is-collapsed', !open);
 
     button.addEventListener('click', () => {
       const collapsed = section.classList.toggle('is-collapsed');
-      button.setAttribute('aria-expanded', String(!collapsed));
+      const nextOpen = !collapsed;
+      button.setAttribute('aria-expanded', String(nextOpen));
+      writeState(key, nextOpen);
     });
 
     section.dataset.rtsCollapseReady = 'true';
