@@ -109,24 +109,18 @@
   };
 
   UI.angle = options => {
-    const dial = UI.el('div', {
-      className: 'rts-ui-direction',
-      role: 'slider',
-      tabIndex: 0,
-      ariaLabel: options.label || 'Direction',
-      ariaValueMin: '0',
-      ariaValueMax: '360'
-    });
+    const dial = UI.el('div', { className: 'rts-ui-direction', role: 'slider', tabIndex: 0 });
+    dial.setAttribute('aria-label', options.label || 'Direction');
+    dial.setAttribute('aria-valuemin', '0');
+    dial.setAttribute('aria-valuemax', '360');
     const face = UI.el('span', { className: 'rts-ui-direction-face' });
     const line = UI.el('span', { className: 'rts-ui-direction-line' });
-    const value = UI.el('output', { className: 'rts-ui-direction-value' });
     let angle = Number(options.value) || 0;
 
     const normalise = value => ((Number(value) % 360) + 360) % 360;
     const render = () => {
       angle = normalise(angle);
-      line.style.transform = 'translate(-50%, -100%) rotate(' + angle + 'deg)';
-      value.textContent = Math.round(angle) + 'deg';
+      line.style.transform = 'translateX(-50%) rotate(' + angle + 'deg)';
       dial.setAttribute('aria-valuenow', String(Math.round(angle)));
     };
     const setAngle = next => {
@@ -160,7 +154,7 @@
     });
 
     face.append(line);
-    dial.append(face, value);
+    dial.append(face);
     dial.getValue = () => angle;
     dial.setValue = next => { angle = Number(next) || 0; render(); };
     render();
