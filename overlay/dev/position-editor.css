@@ -27,6 +27,14 @@
   grid-column: 1;
 }
 
+#rts-overlay.rts-position-editing > * {
+  pointer-events: none;
+}
+
+#rts-overlay.rts-position-editing > .rts-position-marker {
+  pointer-events: auto;
+}
+
 .rts-position-marker {
   position: absolute;
   box-sizing: border-box;
