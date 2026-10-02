@@ -56,16 +56,16 @@
       function render() {
         const item = value();
         position.setValue({ x: item.x || 0, y: item.y || 0 });
-        const width = item.width || 1;
-        const height = item.height || 1;
-        const inputs = ratio.querySelectorAll('input[type="number"]');
-        if (inputs[0]) inputs[0].value = width;
-        if (inputs[1]) inputs[1].value = height;
+        ratio.setValue({
+          width: item.width || 1,
+          height: item.height || 1,
+          locked: true
+        });
         marker.dataset.target = target()?.label || select.value;
         marker.style.left = (item.x || 0) + 'px';
         marker.style.top = (item.y || 0) + 'px';
-        marker.style.width = Math.max(1, width) + 'px';
-        marker.style.height = Math.max(1, height) + 'px';
+        marker.style.width = Math.max(1, item.width || 1) + 'px';
+        marker.style.height = Math.max(1, item.height || 1) + 'px';
       }
 
       let drag = null;
