@@ -38,6 +38,13 @@
       height: Number(height.value),
       locked: lock.querySelector('input')?.checked || false
     });
+    root.setValue = value => {
+      if (value?.width !== undefined) width.value = value.width;
+      if (value?.height !== undefined) height.value = value.height;
+      if (value?.locked !== undefined) lock.querySelector('input').checked = !!value.locked;
+      if (lock.querySelector('input')?.checked)
+        ratio = Number(width.value) / Number(height.value) || 1;
+    };
     return root;
   };
 })();
