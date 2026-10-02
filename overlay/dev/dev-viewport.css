@@ -1,6 +1,6 @@
 #rts-dev-viewport {
   position: fixed;
-  inset: 0 0 0 300px;
+  inset: 0 0 0 var(--rts-dev-toolbar-width, 300px);
   z-index: 1;
   overflow: hidden;
   background: #fff;
@@ -8,9 +8,7 @@
   cursor: grab;
 }
 
-#rts-dev-viewport.dragging {
-  cursor: grabbing;
-}
+#rts-dev-viewport.dragging { cursor: grabbing; }
 
 #rts-dev-stage {
   position: absolute;
@@ -33,28 +31,5 @@
   z-index: 0;
 }
 
-#rts-overlay {
-  z-index: 1;
-}
-
-#rts-dev-screen span {
-  position: absolute;
-  top: -24px;
-  left: 0;
-  padding: 5px 8px;
-  background: #0a0d10;
-  color: #0384CB;
-  font: 600 11px system-ui,sans-serif;
-}
-
-#rts-overlay {
-  position: absolute;
-  inset: auto;
-  width: 1920px;
-  height: 1080px;
-  overflow: visible;
-}
-
-@media (max-width: 700px) {
-  #rts-dev-viewport { left: 240px; }
-}
+#rts-overlay { z-index: 1; position: absolute; inset: auto; width: 1920px; height: 1080px; overflow: visible; }
+#rts-dev-screen span { position: absolute; top: -24px; left: 0; padding: 5px 8px; background: #0a0d10; color: #0384CB; font: 600 11px system-ui,sans-serif; }
