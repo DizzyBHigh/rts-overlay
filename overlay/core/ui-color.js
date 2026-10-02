@@ -10,70 +10,145 @@
     const text = UI.textbox({ value: normalize(options.value || '#0384CBFF') });
     const popup = document.createElement('div');
     popup.className = 'rts-ui-color-popup';
+    const preview = document.createElement('div');
+    preview.className = 'rts-ui-color-preview';
     const sv = document.createElement('div');
     sv.className = 'rts-ui-color-sv';
-    const hue = document.createElement('input');
-    hue.type = 'range';
-    hue.min = 0; hue.max = 360; hue.className = 'rts-ui-color-hue';
-    const alpha = document.createElement('input');
-    alpha.type = 'range';
-    alpha.min = 0; alpha.max = 100; alpha.className = 'rts-ui-color-alpha';
+    const hue = document.createElement('div');
+    hue.className = 'rts-ui-color-hue';
+    hue.tabIndex = 0;
+    hue.setAttribute('role', 'slider');
+    const hueHandle = document.createElement('span');
+    hueHandle.className = 'rts-ui-color-hue-handle';
+    const svHandle = document.createElement('span');
+    svHandle.className = 'rts-ui-color-handle';
+    const alphaRow = document.createElement('div');
+    alphaRow.className = 'rts-ui-color-alpha-row';
+    const alpha = document.createElement('div');
+    alpha.className = 'rts-ui-color-alpha';
+    alpha.tabIndex = 0;
+    alpha.setAttribute('role', 'slider');
+    const alphaHandle = document.createElement('span');
+    alphaHandle.className = 'rts-ui-color-alpha-handle';
     const alphaText = document.createElement('span');
     alphaText.className = 'rts-ui-alpha-value';
-    const hex = document.createElement('input');
-    hex.className = 'rts-ui-input';
-    hex.value = text.value;
-    popup.append(sv, hue, alpha, alphaText, hex);
+
+    hue.append(hueHandle);
+    sv.append(svHandle);
+    alphaRow.append(alpha, alphaText);
+    popup.append(preview, hue, sv, alphaRow);
     wrap.append(swatch, text, popup);
 
     let color = normalize(options.value || '#0384CBFF');
     let hsv = rgbToHsv(hexToRgb(color));
+    let alphaValue = alphaFromHex(color.slice(7));
 
     const render = () => {
       const rgb = hsvToRgb(hsv.h, hsv.s, hsv.v);
-      color = rgbToHex(rgb) + percentToHex(alpha.value);
+      color = rgbToHex(rgb) + percentToHex(alphaValue);
       swatch.style.setProperty('--rts-ui-swatch-color', color);
+      preview.style.backgroundColor = rgbToHex(rgb);
       sv.style.background = 'linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, hsl(' + hsv.h + ' 100% 50%))';
-      hue.value = hsv.h;
-      alpha.value = alphaFromHex(color.slice(7));
-      alphaText.textContent = 'Alpha ' + alpha.value + '%';
-      alpha.style.background = 'linear-gradient(to right, transparent, ' + rgbToHex(rgb) + ')';
+      hueHandle.style.left = (hsv.h / 360 * 100) + '%';
+      svHandle.style.left = (hsv.s * 100) + '%';
+      svHandle.style.top = ((1 - hsv.v) * 100) + '%';
+      alphaHandle.style.left = alphaValue + '%';
+      alpha.style.setProperty('--rts-ui-alpha-color', rgbToHex(rgb));
+      alphaText.textContent = 'Alpha ' + alphaValue + '%';
       text.value = color;
-      hex.value = color;
       options.onChange?.(color, wrap);
     };
 
     const setFromText = value => {
       color = normalize(value);
       hsv = rgbToHsv(hexToRgb(color));
-      alpha.value = alphaFromHex(color.slice(7));
+      alphaValue = alphaFromHex(color.slice(7));
       render();
     };
 
-    swatch.addEventListener('click', () => popup.classList.toggle('open'));
-    document.addEventListener('click', event => {
-      if (!wrap.contains(event.target)) popup.classList.remove('open');
-    });
-    hue.addEventListener('input', () => { hsv.h = Number(hue.value); render(); });
-    alpha.addEventListener('input', render);
-    text.addEventListener('change', () => setFromText(text.value));
-    hex.addEventListener('change', () => setFromText(hex.value));
-    sv.addEventListener('pointerdown', event => {
-      const move = e => {
-        const rect = sv.getBoundingClientRect();
-        hsv.s = clamp((e.clientX - rect.left) / rect.width);
-        hsv.v = clamp(1 - (e.clientY - rect.top) / rect.height);
-        render();
-      };
-      move(event);
+    const pick = (element, event, callback) => {
+      const rect = element.getBoundingClientRect();
+      callback(clamp((event.clientX - rect.left) / rect.width), clamp((event.clientY - rect.top) / rect.height));
+      render();
+    };
+
+    const drag = (element, callback) => {
+      const move = event => { callback(event); render(); };
       const stop = () => {
         document.removeEventListener('pointermove', move);
         document.removeEventListener('pointerup', stop);
       };
       document.addEventListener('pointermove', move);
       document.addEventListener('pointerup', stop);
+    };
+
+    swatch.addEventListener('click', event => {
+      event.stopPropagation();
+      popup.classList.toggle('open');
+    });
+    document.addEventListener('click', event => {
+      if (!wrap.contains(event.target)) popup.classList.remove('open');
     });
 
+    hue.addEventListener('pointerdown', event => {
+      hue.setPointerCapture?.(event.pointerId);
+      const update = () => {
+        const rect = hue.getBoundingClientRect();
+        hsv.h = clamp((event.clientX - rect.left) / rect.width) * 360;
+        render();
+      };
+      update();
+      const move = moveEvent => {
+        const rect = hue.getBoundingClientRect();
+        hsv.h = clamp((moveEvent.clientX - rect.left) / rect.width) * 360;
+        render();
+      };
+      const stop = () => {
+        hue.removeEventListener('pointermove', move);
+        hue.removeEventListener('pointerup', stop);
+        hue.removeEventListener('pointercancel', stop);
+      };
+      hue.addEventListener('pointermove', move);
+      hue.addEventListener('pointerup', stop);
+      hue.addEventListener('pointercancel', stop);
+    });
+    hue.addEventListener('keydown', event => {
+      if (event.key === 'ArrowRight' || event.key === 'ArrowUp') hsv.h = (hsv.h + 1) % 360;
+      else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') hsv.h = (hsv.h + 359) % 360;
+      else return;
+      event.preventDefault();
+      render();
+    });
+
+    sv.addEventListener('pointerdown', event => {
+      const update = moveEvent => {
+        const rect = sv.getBoundingClientRect();
+        hsv.s = clamp((moveEvent.clientX - rect.left) / rect.width);
+        hsv.v = clamp(1 - (moveEvent.clientY - rect.top) / rect.height);
+        render();
+      };
+      update(event);
+      drag(sv, update);
+    });
+
+    alpha.addEventListener('pointerdown', event => {
+      const update = moveEvent => {
+        const rect = alpha.getBoundingClientRect();
+        alphaValue = Math.round(clamp((moveEvent.clientX - rect.left) / rect.width) * 100);
+        render();
+      };
+      update(event);
+      drag(alpha, update);
+    });
+    alpha.addEventListener('keydown', event => {
+      if (event.key === 'ArrowRight' || event.key === 'ArrowUp') alphaValue = Math.min(100, alphaValue + 1);
+      else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') alphaValue = Math.max(0, alphaValue - 1);
+      else return;
+      event.preventDefault();
+      render();
+    });
+
+    text.addEventListener('change', () => setFromText(text.value));
     render();
     return wrap;
   };
