@@ -5,13 +5,18 @@
     root.className = 'rts-ui-ratio';
     const width = UI.number({ value: options.width ?? 1, min: 1 });
     const height = UI.number({ value: options.height ?? 1, min: 1 });
-    const lock = UI.aspectLock({ checked: options.locked !== false });
+    let ratio = Number(width.value) / Number(height.value) || 1;
+    let updating = false;
+    const lock = UI.aspectLock({
+      checked: options.locked !== false,
+      onChange: locked => {
+        if (locked) ratio = Number(width.value) / Number(height.value) || 1;
+        options.onChange?.(Number(width.value), Number(height.value), locked, root);
+      }
+    });
     const row = document.createElement('div');
     row.className = 'rts-ui-lock-row';
     row.append(width, lock, height);
-
-    let ratio = Number(width.value) / Number(height.value) || 1;
-    let updating = false;
 
     const sync = source => {
       if (updating || !lock.getValue()) return;
@@ -26,12 +31,6 @@
 
     width.addEventListener('input', () => sync(width));
     height.addEventListener('input', () => sync(height));
-    lock.addEventListener('change', () => {
-      const locked = lock.getValue();
-      if (locked)
-        ratio = Number(width.value) / Number(height.value) || 1;
-      options.onChange?.(Number(width.value), Number(height.value), locked, root);
-    });
 
     root.append(row);
     root.getValue = () => ({
