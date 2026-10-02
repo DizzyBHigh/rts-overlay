@@ -14,11 +14,11 @@
     allowed.forEach(key => {
       const range = limits[key] || [-99999, 99999];
       fields[key] = UI.number({ value: options.value?.[key] ?? 0, min: range[0], max: range[1] });
-      const field = UI.el('div', { className: 'rts-ui-inline-field' });
-      field.append(fields[key], UI.el('span', { className: 'rts-ui-label', text: key }));
-      row.append(field);
-      fields[key].addEventListener('input', emit);
     });
+    allowed.forEach((key, index) => {
+      row.append(UI.el('span', { className: 'rts-ui-label', text: key }), fields[key]);
+    });
+    allowed.forEach(key => fields[key].addEventListener('input', emit));
     root.append(row);
     function emit() {
       const value = {};
