@@ -11,7 +11,6 @@
       let visible = true;
       let drag = null;
       let resize = null;
-      if (overlay) overlay.classList.add('rts-position-editing');
       targets.forEach(target => {
         const option = document.createElement('option');
         option.value = target.id;
@@ -89,6 +88,7 @@
             : value(item.id);
           if (!marker) return;
           marker.hidden = !visible;
+          marker.style.zIndex = visible ? '2147483647' : '';
           marker.dataset.target = item.label || item.id;
           marker.classList.toggle('is-selected', item.id === selected);
           marker.style.left = (current.x || 0) + 'px';
