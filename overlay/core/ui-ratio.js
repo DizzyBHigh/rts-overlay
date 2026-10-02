@@ -6,6 +6,7 @@
     const width = UI.number({ value: options.width ?? 1, min: 1 });
     const height = UI.number({ value: options.height ?? 1, min: 1 });
     const lock = UI.aspectLock({ checked: options.locked !== false });
+    const input = lock.querySelector('input');
     const row = document.createElement('div');
     row.className = 'rts-ui-lock-row';
     row.append(width, lock, height);
@@ -14,7 +15,7 @@
     let updating = false;
 
     const sync = source => {
-      if (updating || !lock.querySelector('input')?.checked) return;
+      if (updating || !input.checked) return;
       updating = true;
       if (source === width)
         height.value = Math.max(1, Math.round(Number(width.value) / ratio));
@@ -26,6 +27,17 @@
 
     width.addEventListener('input', () => sync(width));
     height.addEventListener('input', () => sync(height));
+    lock.addEventListener('click', event => {
+      event.preventDefault();
+      input.checked = !input.checked;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    lock.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      input.checked = !input.checked;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
     lock.addEventListener('change', event => {
       if (event.target.checked)
         ratio = Number(width.value) / Number(height.value) || 1;
@@ -36,13 +48,13 @@
     root.getValue = () => ({
       width: Number(width.value),
       height: Number(height.value),
-      locked: lock.querySelector('input')?.checked || false
+      locked: input.checked
     });
     root.setValue = value => {
       if (value?.width !== undefined) width.value = value.width;
       if (value?.height !== undefined) height.value = value.height;
-      if (value?.locked !== undefined) lock.querySelector('input').checked = !!value.locked;
-      if (lock.querySelector('input')?.checked)
+      if (value?.locked !== undefined) input.checked = !!value.locked;
+      if (input.checked)
         ratio = Number(width.value) / Number(height.value) || 1;
     };
     return root;
