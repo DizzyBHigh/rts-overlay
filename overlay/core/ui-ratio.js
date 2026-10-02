@@ -45,11 +45,15 @@
       locked: lock.getValue()
     });
     root.setValue = value => {
+      if (lock.getValue() && value?.width !== undefined && value?.height !== undefined) {
+        ratio = Number(value.width) / Number(value.height) || 1;
+      }
       if (value?.width !== undefined) width.value = value.width;
       if (value?.height !== undefined) height.value = value.height;
       if (value?.locked !== undefined) lock.setValue(value.locked);
-      if (lock.getValue())
+      if (lock.getValue() && value?.width === undefined && value?.height === undefined) {
         ratio = Number(width.value) / Number(height.value) || 1;
+      }
     };
     return root;
   };
