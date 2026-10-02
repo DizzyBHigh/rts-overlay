@@ -66,12 +66,6 @@
       render();
     };
 
-    const pick = (element, event, callback) => {
-      const rect = element.getBoundingClientRect();
-      callback(clamp((event.clientX - rect.left) / rect.width), clamp((event.clientY - rect.top) / rect.height));
-      render();
-    };
-
     const drag = (element, callback) => {
       const move = event => { callback(event); render(); };
       const stop = () => {
@@ -92,25 +86,13 @@
 
     hue.addEventListener('pointerdown', event => {
       hue.setPointerCapture?.(event.pointerId);
-      const update = () => {
-        const rect = hue.getBoundingClientRect();
-        hsv.h = clamp((event.clientX - rect.left) / rect.width) * 360;
-        render();
-      };
-      update();
-      const move = moveEvent => {
+      const update = moveEvent => {
         const rect = hue.getBoundingClientRect();
         hsv.h = clamp((moveEvent.clientX - rect.left) / rect.width) * 360;
         render();
       };
-      const stop = () => {
-        hue.removeEventListener('pointermove', move);
-        hue.removeEventListener('pointerup', stop);
-        hue.removeEventListener('pointercancel', stop);
-      };
-      hue.addEventListener('pointermove', move);
-      hue.addEventListener('pointerup', stop);
-      hue.addEventListener('pointercancel', stop);
+      update(event);
+      drag(hue, update);
     });
     hue.addEventListener('keydown', event => {
       if (event.key === 'ArrowRight' || event.key === 'ArrowUp') hsv.h = (hsv.h + 1) % 360;
@@ -149,6 +131,14 @@
     });
 
     text.addEventListener('change', () => setFromText(text.value));
+
+    wrap.getValue = () => color;
+    wrap.setValue = value => setFromText(value);
+    Object.defineProperty(wrap, 'value', {
+      get: () => color,
+      set: value => setFromText(value)
+    });
+
     render();
     return wrap;
   };
