@@ -98,6 +98,45 @@
     numeric?.addEventListener('input', () => sync(numeric));
     wrap.append(numeric || range, range, value);
     if (!numeric) wrap.replaceChildren(range, value);
+    wrap.getValue = () => Number(range.value);
+    wrap.setValue = next => {
+      const value = Math.min(Number(options.max ?? 100), Math.max(Number(options.min ?? 0), Number(next) || 0));
+      range.value = value;
+      if (numeric) numeric.value = value;
+      wrap.querySelector('.rts-ui-slider-value').textContent = value;
+    };
+    return wrap;
+  };
+
+  UI.angle = options => {
+    const control = UI.slider({
+      min: 0,
+      max: 360,
+      step: 1,
+      value: options.value ?? 0,
+      numericInput: true,
+      onInput: options.onInput
+    });
+    control.classList.add('rts-ui-angle');
+    return control;
+  };
+
+  UI.fontSelector = options => {
+    const wrap = UI.el('div', { className: 'rts-ui-font-picker' });
+    const select = UI.dropdown({ options: options.options || [], value: options.value || '', onChange: value => {
+      preview.style.fontFamily = value;
+      options.onChange?.(value, select);
+    }});
+    const preview = UI.el('div', { className: 'rts-ui-font-preview', text: options.preview || 'Higher Lower' });
+    preview.style.fontFamily = select.value;
+    wrap.append(select, preview);
+    Object.defineProperty(wrap, 'value', {
+      get: () => select.value,
+      set: value => {
+        select.value = value || '';
+        preview.style.fontFamily = select.value;
+      }
+    });
     return wrap;
   };
 
