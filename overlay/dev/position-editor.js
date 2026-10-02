@@ -93,6 +93,7 @@
           const current = value(item.id);
           if (!marker) return;
           marker.hidden = !visible;
+          marker.style.zIndex = visible ? '2147483647' : '';
           marker.dataset.target = item.label || item.id;
           marker.classList.toggle('is-selected', item.id === selected);
           marker.style.left = (current.x || 0) + 'px';
