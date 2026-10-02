@@ -19,6 +19,7 @@
   width: 1920px;
   height: 1080px;
   transform-origin: 0 0;
+  overflow: visible;
 }
 
 #rts-dev-screen {
@@ -51,6 +52,7 @@
   inset: auto;
   width: 1920px;
   height: 1080px;
+  overflow: visible;
 }
 
 @media (max-width: 700px) {
