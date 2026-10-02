@@ -36,10 +36,7 @@
     scale(canvas) {
       const width = Math.max(1, canvas?.clientWidth || this.referenceWidth);
       const height = Math.max(1, canvas?.clientHeight || this.referenceHeight);
-      return {
-        x: width / this.referenceWidth,
-        y: height / this.referenceHeight
-      };
+      return { x: width / this.referenceWidth, y: height / this.referenceHeight };
     },
 
     point(position, canvas) {
@@ -60,9 +57,6 @@
 
     apply(element, position) {
       if (!element) return null;
-      const canvas = element.offsetParent ||
-        document.getElementById('rts-overlay') || document.body;
-      const point = this.point(position, canvas);
       element.style.left = '0px';
       element.style.top = '0px';
       element.style.transformOrigin = 'top left';
