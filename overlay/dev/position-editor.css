@@ -28,16 +28,6 @@
   grid-column: 1 / -1;
 }
 
-.rts-position-editor::after {
-  content: 'X   Y   Width   Height';
-  grid-column: 1 / -1;
-  grid-row: 2;
-  order: -1;
-  color: rgba(255,255,255,.5);
-  font-size: 9px;
-  pointer-events: none;
-}
-
 .rts-position-marker {
   position: absolute;
   box-sizing: border-box;
