@@ -20,6 +20,9 @@
         select.appendChild(option);
       });
 
+      const target = id => targets.find(item => item.id === id);
+      const value = id => target(id)?.get?.() || {};
+
       const position = RTS.core.ui.positionEditor({
         fields: ['x', 'y'],
         value: {},
@@ -64,9 +67,7 @@
           const handle = document.createElement('span');
           handle.className = 'rts-position-resize rts-position-resize--' + corner;
           handle.dataset.corner = corner;
-          handle.addEventListener('pointerdown', event =>
-            startResize(event, target.id, corner, handle)
-          );
+          handle.addEventListener('pointerdown', event => startResize(event, target.id, corner, handle));
           marker.appendChild(handle);
         });
         marker.addEventListener('pointerdown', event => startDrag(event, target.id, marker));
@@ -76,9 +77,6 @@
         markers.set(target.id, marker);
         if (overlay) overlay.appendChild(marker);
       });
-
-      const target = id => targets.find(item => item.id === id);
-      const value = id => target(id)?.get?.() || {};
 
       function apply(id, patch, transient = false) {
         const item = target(id);
@@ -104,10 +102,7 @@
         });
         const current = value(selected);
         position.setValue({ x: current.x || 0, y: current.y || 0 });
-        ratio.setValue({
-          width: current.width || 1,
-          height: current.height || 1
-        });
+        ratio.setValue({ width: current.width || 1, height: current.height || 1 });
       }
 
       function pointerScale() {
@@ -121,15 +116,7 @@
         select.value = id;
         render();
         const current = value(id);
-        drag = {
-          id,
-          x: current.x || 0,
-          y: current.y || 0,
-          px: event.clientX,
-          py: event.clientY,
-          scale: pointerScale(),
-          pointerId: event.pointerId
-        };
+        drag = { id, x: current.x || 0, y: current.y || 0, px: event.clientX, py: event.clientY, scale: pointerScale(), pointerId: event.pointerId };
         marker.setPointerCapture(event.pointerId);
         options.onSelect?.(id, current);
       }
@@ -144,6 +131,17 @@
         }, true);
       }
 
+      function stopDrag(event) {
+        if (!drag || event.pointerId !== drag.pointerId) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const id = drag.id;
+        const marker = markers.get(id);
+        drag = null;
+        options.onCommit?.(value(id), id);
+        if (marker?.hasPointerCapture(event.pointerId)) marker.releasePointerCapture(event.pointerId);
+      }
+
       function startResize(event, id, corner, handle) {
         if (event.button !== 0) return;
         event.preventDefault();
@@ -152,8 +150,7 @@
         render();
         const current = value(id);
         resize = {
-          id,
-          corner,
+          id, corner,
           x: current.x || 0,
           y: current.y || 0,
           width: Math.max(1, current.width || 1),
@@ -177,20 +174,16 @@
         let { x, y, width, height } = resize;
         let nextWidth = width;
         let nextHeight = height;
-
         if (resize.corner.includes('e')) nextWidth = Math.max(20, width + dx);
         if (resize.corner.includes('w')) nextWidth = Math.max(20, width - dx);
         if (resize.corner.includes('s')) nextHeight = Math.max(20, height + dy);
         if (resize.corner.includes('n')) nextHeight = Math.max(20, height - dy);
-
         if (ratio.getValue().locked) {
           if (Math.abs(dx) >= Math.abs(dy)) nextHeight = Math.max(20, nextWidth / resize.ratio);
           else nextWidth = Math.max(20, nextHeight * resize.ratio);
         }
-
         if (resize.corner.includes('w')) x = resize.x + width - nextWidth;
         if (resize.corner.includes('n')) y = resize.y + height - nextHeight;
-
         apply(resize.id, { x, y, width: nextWidth, height: nextHeight }, true);
       }
 
@@ -199,9 +192,7 @@
         event.preventDefault();
         event.stopPropagation();
         const id = resize.id;
-        const handle = markers.get(id)?.querySelector(
-          '.rts-position-resize[data-corner="' + resize.corner + '"]'
-        );
+        const handle = markers.get(id)?.querySelector('.rts-position-resize[data-corner="' + resize.corner + '"]');
         resize = null;
         options.onCommit?.(value(id), id);
         if (handle?.hasPointerCapture(event.pointerId)) handle.releasePointerCapture(event.pointerId);
@@ -225,6 +216,5 @@
       return root;
     }
   };
-
   RTS.core.positionEditor = Editor;
 })();
