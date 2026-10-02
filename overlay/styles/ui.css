@@ -35,7 +35,7 @@
 .rts-ui-direction:hover { border-color:var(--rts-ui-yellow); }
 .rts-ui-direction:focus-visible { outline:1px solid var(--rts-ui-yellow); outline-offset:2px; }
 .rts-ui-direction-face { position:absolute; inset:5px; border-radius:50%; background:rgba(255,255,255,.025); }
-.rts-ui-direction-line { position:absolute; left:50%; top:50%; width:2px; height:17px; transform-origin:50% 100%; border-radius:2px; background:var(--rts-ui-yellow); pointer-events:none; }
+.rts-ui-direction-line { position:absolute; left:50%; bottom:50%; width:2px; height:17px; transform-origin:50% 100%; border-radius:2px; background:var(--rts-ui-yellow); pointer-events:none; }
 .rts-ui-direction-line::after { content:''; position:absolute; left:50%; top:0; width:6px; height:6px; transform:translate(-50%,-50%); border-radius:50%; background:var(--rts-ui-yellow); }
 .rts-ui-direction-value { display:none; }
 .rts-ui-lock-row { display: grid; grid-template-columns: 10px minmax(48px,1fr) 28px minmax(48px,1fr) 10px; gap: 4px; align-items: center; width: 100%; min-width: 0; }
