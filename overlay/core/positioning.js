@@ -33,16 +33,27 @@
       return key ? positions[key] : fallback;
     },
 
+    scale(canvas) {
+      const width = Math.max(1, canvas?.clientWidth || this.referenceWidth);
+      const height = Math.max(1, canvas?.clientHeight || this.referenceHeight);
+      return {
+        x: width / this.referenceWidth,
+        y: height / this.referenceHeight
+      };
+    },
+
+    point(position, canvas) {
+      const p = this.normalise(position);
+      const scale = this.scale(canvas);
+      return { x: p.x * scale.x, y: p.y * scale.y };
+    },
+
     transform(element, position) {
       const p = this.normalise(position);
       const canvas = element?.offsetParent ||
         document.getElementById('rts-overlay') || document.body;
-      const width = Math.max(1, canvas.clientWidth || this.referenceWidth);
-      const height = Math.max(1, canvas.clientHeight || this.referenceHeight);
-      const x = p.x / 100 * width;
-      const y = -p.y / 100 * height;
-
-      return `perspective(960px) translate3d(${x}px, ${y}px, ${p.z}px) ` +
+      const point = this.point(p, canvas);
+      return `translate3d(${point.x}px, ${point.y}px, ${p.z}px) ` +
         `rotateZ(${-p.rotateZ}deg) rotateY(${p.rotateY}deg) ` +
         `rotateX(${-p.rotateX}deg) scale3d(${p.scaleX / 100}, ${p.scaleY / 100}, 1)`;
     },
@@ -51,13 +62,10 @@
       if (!element) return null;
       const canvas = element.offsetParent ||
         document.getElementById('rts-overlay') || document.body;
-      const width = Math.max(1, canvas.clientWidth || this.referenceWidth);
-      const height = Math.max(1, canvas.clientHeight || this.referenceHeight);
-      const elementWidth = Math.max(0, element.offsetWidth || 0);
-      const elementHeight = Math.max(0, element.offsetHeight || 0);
-
-      element.style.left = `${(width - elementWidth) / 2}px`;
-      element.style.top = `${(height - elementHeight) / 2}px`;
+      const point = this.point(position, canvas);
+      element.style.left = '0px';
+      element.style.top = '0px';
+      element.style.transformOrigin = 'top left';
       element.style.transform = this.transform(element, position);
       return element.style.transform;
     }
