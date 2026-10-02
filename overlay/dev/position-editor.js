@@ -46,7 +46,13 @@
           toggle.textContent = visible ? 'Hide Positions' : 'Show Positions';
         }
       });
+      const save = options.onSave
+        ? RTS.core.ui.button('Save Layout', {
+            onClick: () => options.onSave?.()
+          })
+        : null;
       root.append(select, positionRow, scaleRow, toggle);
+      if (save) root.appendChild(save);
       host.appendChild(root);
       targets.forEach(target => {
         const marker = document.createElement('div');
