@@ -5,7 +5,7 @@ public class CPHInline
 {
     private const string ConfigurationKey = "rts-overlay";
     private const string LegacyKey = "rts.overlay.configuration";
-    private const string EventName = "RTS - Overlay - Configuration";
+    private const string EventName = "RTS - Overlay";
 
     public bool Execute()
     {
