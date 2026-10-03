@@ -3,9 +3,10 @@
 
   const readState = key => {
     try {
-      return window.localStorage.getItem(key) === 'open';
+      const value = window.localStorage.getItem(key);
+      return value === null ? true : value === 'open';
     } catch {
-      return false;
+      return true;
     }
   };
 
@@ -19,7 +20,7 @@
 
   const enhance = section => {
     if (!section || section.dataset.rtsCollapseReady === 'true') return;
-    const title = section.querySelector(':scope > .rts-ui-title');
+    const title = Array.from(section.children).find(child => child.classList?.contains('rts-ui-title'));
     if (!title) return;
 
     const text = title.textContent.trim();
@@ -33,7 +34,8 @@
     title.replaceWith(button);
     section.classList.toggle('is-collapsed', !open);
 
-    button.addEventListener('click', () => {
+    button.addEventListener('click', event => {
+      event.stopPropagation();
       const collapsed = section.classList.toggle('is-collapsed');
       const nextOpen = !collapsed;
       button.setAttribute('aria-expanded', String(nextOpen));
@@ -43,7 +45,10 @@
     section.dataset.rtsCollapseReady = 'true';
   };
 
-  const enhanceAll = root => root.querySelectorAll?.('.rts-ui-section').forEach(enhance);
+  const enhanceAll = root => {
+    if (!root?.querySelectorAll) return;
+    root.querySelectorAll('.rts-ui-section').forEach(enhance);
+  };
 
   const observer = new MutationObserver(mutations => {
     mutations.forEach(mutation => mutation.addedNodes.forEach(node => {
