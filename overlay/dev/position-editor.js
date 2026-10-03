@@ -24,7 +24,7 @@
       const value = id => target(id)?.get?.() || {};
       const position = RTS.core.ui.positionEditor({
         fields: ['x', 'y'], value: {}, inline: true,
-        onChange: value => applySelected({ x: value.x, y: value.y })
+        onChange: value => apply(select.value, { x: value.x, y: value.y })
       });
       const ratio = RTS.core.ui.aspectRatio({
         width: 1, height: 1, locked: true, labels: ['x', 'y'],
@@ -102,9 +102,6 @@
         item.set(patch, { transient });
         options.onChange?.(item.get?.(), id);
         render(id, patch);
-      }
-      function applySelected(patch, transient = false) {
-        [...selected].forEach(id => apply(id, patch, transient));
       }
       function render(overrideId, override = {}) {
         const primary = select.value;
