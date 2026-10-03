@@ -4,6 +4,19 @@
     if (element) element.textContent = message;
   };
 
+  const loadExtension = async (url, id = '') => {
+    if (!url) return false;
+
+    try {
+      await RTS.core.extensions.loadManifest(url);
+      log('Extension loaded: ' + (id || 'extension'));
+      return true;
+    } catch (error) {
+      log('Extension load failed: ' + error.message);
+      return false;
+    }
+  };
+
   window.RTSOverlaySocket.onEvent(message => {
     const eventName =
       message?.data?.eventName ??
@@ -29,8 +42,21 @@
       return;
     }
 
+    if (eventName === 'RTS - Overlay - Load Extension') {
+      const args = message?.data?.args ?? message?.args ?? {};
+      loadExtension(
+        args.rtsOverlayManifestUrl,
+        args.rtsOverlayExtension
+      );
+      return;
+    }
+
     RTS.core.events?.emit(eventName, message);
   });
+
+  const params = new URLSearchParams(window.location.search);
+  const manifestUrl = params.get('manifest');
+  if (manifestUrl) loadExtension(manifestUrl);
 
   const loadButton = document.getElementById('load');
   if (loadButton) {
