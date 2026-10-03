@@ -86,18 +86,36 @@
         const steps = Array.isArray(sequence) ? sequence : [];
         if (!steps.length) { complete?.(); return; }
         cancel();
+        if (!endRun) {
+          const first = steps[0];
+          active = resolve(first?.position || first?.name);
+          apply(active);
+          let index = 1;
+          const delay = Math.max(0, Number(first?.delay) || 0);
+          const advance = () => {
+            if (index >= steps.length) { complete?.(); return; }
+            const step = steps[index++];
+            const targetPosition = resolve(step?.position || step?.name);
+            const start = active || targetPosition;
+            const finish = () => {
+              active = targetPosition;
+              const nextDelay = Math.max(0, Number(step?.delay) || 0);
+              if (nextDelay) timer = setTimeout(advance, nextDelay); else advance();
+            };
+            transition(start, targetPosition, step?.duration, step?.easing, finish);
+          };
+          if (delay) timer = setTimeout(advance, delay); else advance();
+          return;
+        }
         let index = 0;
-        let current = endRun ? active || resolve(steps[0]?.position || steps[0]?.name) : resolve(steps[0]?.position || steps[0]?.name);
-        if (!endRun) apply(current);
         const advance = () => {
           if (index >= steps.length) { complete?.(); return; }
           const step = steps[index++];
           const targetPosition = resolve(step?.position || step?.name);
-          const start = current || targetPosition;
+          const start = active || targetPosition;
           const delay = Math.max(0, Number(step?.delay) || 0);
           const finish = () => {
-            current = targetPosition;
-            active = current;
+            active = targetPosition;
             if (delay) timer = setTimeout(advance, delay); else advance();
           };
           transition(start, targetPosition, step?.duration, step?.easing, finish);
