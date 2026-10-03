@@ -7,12 +7,12 @@
     const face = UI.el('div', { className: 'rts-ui-direction', role: 'slider', tabIndex: 0 });
     const line = UI.el('span', { className: 'rts-ui-direction-line' });
     const manual = UI.el('div', { className: 'rts-ui-direction-manual' });
+    const maxDistance = Math.max(0, Number(options.maxDistance ?? 10));
     const angleInput = UI.el('input', { className: 'rts-ui-input', type: 'number', min: '0', max: '360', step: '1' });
-    const distanceInput = UI.el('input', { className: 'rts-ui-input', type: 'number', min: '0', max: '19', step: '1' });
-    const maxDistance = 19;
+    const distanceInput = UI.el('input', { className: 'rts-ui-input', type: 'number', min: '0', max: String(maxDistance), step: '1' });
     const objectMode = options.value && typeof options.value === 'object';
     let angle = 0;
-    let distance = 3;
+    let distance = Math.min(3, maxDistance);
 
     dial.append(face);
     manual.append(angleInput, distanceInput);
@@ -33,7 +33,7 @@
         return;
       }
       angle = normalise(value);
-      distance = 3;
+      distance = Math.min(3, maxDistance);
     };
 
     const render = () => {
