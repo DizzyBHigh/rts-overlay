@@ -2,6 +2,8 @@
   const UI = window.RTS?.core?.ui;
   if (!UI) return;
 
+  const directionGroups = new Map();
+
   UI.angle = options => {
     const dial = UI.el('div', { className: 'rts-ui-direction-control' });
     const face = UI.el('div', { className: 'rts-ui-direction', role: 'slider', tabIndex: 0 });
@@ -54,6 +56,18 @@
       if (notify) emit();
     };
 
+    const applyToGroup = () => {
+      const group = options.allGroup || (objectMode ? 'direction' : null);
+      if (!group) return;
+      const controls = directionGroups.get(group) || [];
+      const value = { angle, distance };
+      controls.filter(control => document.contains(control)).forEach(control => control.setValue(value));
+      options.onInput?.(value, face);
+    };
+
+    const allButton = objectMode ? UI.button('All', { onClick: applyToGroup }) : null;
+    if (allButton) manual.append(allButton);
+
     const updateFromPointer = event => {
       const rect = face.getBoundingClientRect();
       const x = event.clientX - rect.left - rect.width / 2;
@@ -91,6 +105,14 @@
     dial.getDirection = () => ({ angle, distance });
     dial.setValue = next => { readValue(next); render(); };
     dial.classList.toggle('has-manual-values', objectMode);
+
+    if (objectMode) {
+      const group = options.allGroup || 'direction';
+      const controls = directionGroups.get(group) || [];
+      controls.push(dial);
+      directionGroups.set(group, controls);
+    }
+
     readValue(options.value);
     render();
     return dial;
