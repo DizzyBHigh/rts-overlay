@@ -7,6 +7,7 @@
     const face = UI.el('span', { className: 'rts-ui-direction-face' });
     const line = UI.el('span', { className: 'rts-ui-direction-line' });
     const maxDistance = 19;
+    const objectMode = options.value && typeof options.value === 'object';
     let angle = 0;
     let distance = 3;
 
@@ -75,7 +76,7 @@
 
     face.append(line);
     dial.append(face);
-    dial.getValue = () => angle;
+    dial.getValue = () => objectMode ? { angle, distance } : angle;
     dial.getDirection = () => ({ angle, distance });
     dial.setValue = next => { readValue(next); render(); };
     readValue(options.value);
