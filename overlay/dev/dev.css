@@ -26,11 +26,10 @@
 .dev-toolbar-resize::after {
   content: '';
   position: absolute;
-  top: 50%;
+  top: 0;
   right: 2px;
   width: 2px;
-  height: 42px;
-  transform: translateY(-50%);
+  height: 100%;
   border-radius: 2px;
   background: rgba(224,166,52,.7);
 }
