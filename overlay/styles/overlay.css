@@ -22,3 +22,9 @@ body {
   height: 100vh;
   overflow: hidden;
 }
+
+.rts-panel {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
