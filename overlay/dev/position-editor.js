@@ -24,7 +24,7 @@
       const value = id => target(id)?.get?.() || {};
       const position = RTS.core.ui.positionEditor({
         fields: ['x', 'y'], value: {}, inline: true,
-        onChange: value => apply(select.value, { x: value.x, y: value.y })
+        onChange: value => applySelected({ x: value.x, y: value.y })
       });
       const ratio = RTS.core.ui.aspectRatio({
         width: 1, height: 1, locked: true, labels: ['x', 'y'],
@@ -42,6 +42,15 @@
         RTS.core.ui.el('span', { className: 'rts-position-control-title', text: 'Scale' }),
         ratio
       );
+      const selectAll = RTS.core.ui.button('Select All', {
+        variant: 'blue',
+        onClick: () => {
+          targets.forEach(item => selected.add(item.id));
+          if (!selected.has(select.value) && targets[0]) select.value = targets[0].id;
+          render();
+          options.onSelect?.(select.value, value(select.value));
+        }
+      });
       const toggle = RTS.core.ui.button('Hide Positions', {
         onClick: () => {
           visible = !visible;
@@ -54,7 +63,7 @@
         : null;
       const saveStatus = document.createElement('span');
       saveStatus.className = 'rts-position-save-status';
-      root.append(select, positionRow, scaleRow, toggle);
+      root.append(select, selectAll, positionRow, scaleRow, toggle);
       if (save) root.append(save, saveStatus);
       host.appendChild(root);
       targets.forEach(target => {
@@ -93,6 +102,9 @@
         item.set(patch, { transient });
         options.onChange?.(item.get?.(), id);
         render(id, patch);
+      }
+      function applySelected(patch, transient = false) {
+        [...selected].forEach(id => apply(id, patch, transient));
       }
       function render(overrideId, override = {}) {
         const primary = select.value;
