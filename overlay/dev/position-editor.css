@@ -43,6 +43,10 @@
   border-width: 3px;
 }
 
+.rts-position-marker.hide-label::before {
+  display: none;
+}
+
 .rts-position-marker::before {
   content: attr(data-target);
   position: absolute;
