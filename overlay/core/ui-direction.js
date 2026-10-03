@@ -57,16 +57,15 @@
     };
 
     const applyToGroup = () => {
-      const group = options.allGroup || (objectMode ? 'direction' : null);
-      if (!group) return;
+      const group = options.allGroup || (objectMode ? 'direction' : 'angle');
       const controls = directionGroups.get(group) || [];
       const value = { angle, distance };
       controls.filter(control => document.contains(control)).forEach(control => control.setValue(value));
       options.onInput?.(value, face);
     };
 
-    const allButton = objectMode ? UI.button('All', { onClick: applyToGroup }) : null;
-    if (allButton) manual.append(allButton);
+    const allButton = UI.button('All', { onClick: applyToGroup });
+    manual.append(allButton);
 
     const updateFromPointer = event => {
       const rect = face.getBoundingClientRect();
@@ -106,12 +105,10 @@
     dial.setValue = next => { readValue(next); render(); };
     dial.classList.toggle('has-manual-values', objectMode);
 
-    if (objectMode) {
-      const group = options.allGroup || 'direction';
-      const controls = directionGroups.get(group) || [];
-      controls.push(dial);
-      directionGroups.set(group, controls);
-    }
+    const group = options.allGroup || (objectMode ? 'direction' : 'angle');
+    const controls = directionGroups.get(group) || [];
+    controls.push(dial);
+    directionGroups.set(group, controls);
 
     readValue(options.value);
     render();
