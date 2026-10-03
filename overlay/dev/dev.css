@@ -14,13 +14,14 @@
 }
 
 .dev-toolbar-resize {
-  position: absolute;
+  position: fixed;
   top: 0;
-  right: 0;
+  bottom: 0;
+  left: calc(var(--rts-dev-toolbar-width, 300px) - 8px);
   width: 8px;
-  height: 100%;
   cursor: ew-resize;
   touch-action: none;
+  z-index: 10001;
 }
 
 .dev-toolbar-resize::after {
