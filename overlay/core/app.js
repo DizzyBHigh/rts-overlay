@@ -4,11 +4,14 @@
     if (element) element.textContent = message;
   };
 
+  const params = new URLSearchParams(window.location.search);
+  const isDev = params.get('dev') === 'true';
+
   const loadExtension = async (url, id = '') => {
     if (!url) return false;
 
     try {
-      await RTS.core.extensions.loadManifest(url);
+      await RTS.core.extensions.loadManifest(url, { dev: isDev });
       log('Extension loaded: ' + (id || 'extension'));
       return true;
     } catch (error) {
@@ -54,7 +57,6 @@
     RTS.core.events?.emit(eventName, message);
   });
 
-  const params = new URLSearchParams(window.location.search);
   const manifestUrl = params.get('manifest');
   if (manifestUrl) loadExtension(manifestUrl);
 
