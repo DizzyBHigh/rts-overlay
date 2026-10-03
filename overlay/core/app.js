@@ -9,12 +9,15 @@
 
   const loadExtension = async (url, id = '') => {
     if (!url) return false;
+    RTS.core.log?.info('Loading extension', { id, url, dev: isDev });
 
     try {
       await RTS.core.extensions.loadManifest(url, { dev: isDev });
+      RTS.core.log?.info('Extension loaded', { id, url });
       log('Extension loaded: ' + (id || 'extension'));
       return true;
     } catch (error) {
+      RTS.core.log?.error('Extension load failed', error?.message || error);
       log('Extension load failed: ' + error.message);
       return false;
     }
@@ -24,6 +27,8 @@
     const eventName =
       message?.data?.eventName ??
       message?.eventName;
+
+    RTS.core.log?.info('Overlay event received', { eventName, message });
 
     if (eventName === 'RTS - Overlay - Configuration') {
       const configuration =
@@ -38,8 +43,10 @@
             ? JSON.parse(configuration)
             : configuration
         );
+        RTS.core.log?.info('Configuration applied');
         log('Configuration received from Streamer.bot.');
       } catch (error) {
+        RTS.core.log?.error('Configuration apply failed', error?.message || error);
         log(error.message);
       }
       return;
@@ -47,6 +54,7 @@
 
     if (eventName === 'RTS - Overlay - Load Extension') {
       const args = message?.data?.args ?? message?.args ?? {};
+      RTS.core.log?.info('Load extension event', args);
       loadExtension(
         args.rtsOverlayManifestUrl,
         args.rtsOverlayExtension
