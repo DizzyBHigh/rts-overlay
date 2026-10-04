@@ -33,6 +33,7 @@
     '<input id="extension-manifest" type="url" value="https://dizzybhigh.github.io/rts-higher-lower/overlay/manifest.json">',
     '</label>',
     '<button id="extension-load" type="button">Load Extension</button>',
+    '<button id="rts-dev-log-toggle" type="button">Show Log</button>',
     '</section>',
     '<section class="dev-section">',
     '<h3>Viewport</h3>',
