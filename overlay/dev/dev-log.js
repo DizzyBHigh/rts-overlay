@@ -19,11 +19,13 @@
   document.body.appendChild(windowElement);
 
   const output = windowElement.querySelector('#rts-dev-log-output');
+  const toggleButton = document.getElementById('rts-dev-log-toggle');
   const positionKey = 'rts-dev-log-position';
   const sizeKey = 'rts-dev-log-size';
 
   restorePosition();
   restoreSize();
+  setVisible(true);
 
   windowElement.querySelector('#rts-log-clear').onclick = () => {
     RTS.core.log.clear();
@@ -31,8 +33,12 @@
   };
 
   windowElement.querySelector('#rts-log-close').onclick = () => {
-    windowElement.style.display = 'none';
+    setVisible(false);
   };
+
+  toggleButton?.addEventListener('click', () => {
+    setVisible(windowElement.style.display === 'none');
+  });
 
   windowElement.querySelector('.rts-dev-log-header').addEventListener('pointerdown', event => {
     if (event.target.closest('button')) return;
@@ -59,6 +65,11 @@
   windowElement.addEventListener('mouseup', saveSize);
   RTS.core.log.on(renderEntry);
   render();
+
+  function setVisible(visible) {
+    windowElement.style.display = visible ? '' : 'none';
+    if (toggleButton) toggleButton.textContent = visible ? 'Hide Log' : 'Show Log';
+  }
 
   function renderEntry() {
     render();
