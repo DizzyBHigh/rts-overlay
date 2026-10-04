@@ -10,8 +10,8 @@
       const element = options.element || document.createElement('section');
       element.classList.add('rts-panel');
       element.dataset.panelId = key;
-      element.setAttribute('aria-hidden', 'true');
-      element.hidden = true;
+      element.setAttribute('aria-hidden', 'false');
+      element.hidden = false;
 
       const parent = options.parent ||
         document.getElementById('rts-overlay') || document.body;
@@ -51,12 +51,6 @@
           RTS.core.animationProfiles.run(
             this.runner, this.options.positions || {}, sequence, complete
           );
-          return this;
-        },
-
-        hide() {
-          this.element.hidden = true;
-          this.element.setAttribute('aria-hidden', 'true');
           return this;
         },
 
